@@ -1,0 +1,3 @@
+classes= 1
+test=kitti_eval/test.txt
+names=kitti_eval/classes.names
