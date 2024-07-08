@@ -1,6 +1,6 @@
 from __future__ import division
 
-from models import *
+from utils.models import *
 from utils.utils import *
 from utils.datasets import *
 from utils.trafos import *
