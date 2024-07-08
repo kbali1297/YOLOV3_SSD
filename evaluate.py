@@ -35,7 +35,14 @@ def evaluate(model, path, iou_thres, conf_thres, nms_thres, img_size, batch_size
         
         if targets is None:
             continue
-            
+        
+        #print(f'model device: {model.device}')
+        
+        try: device = model.device
+        except: device = 'cuda:0'
+
+        imgs, targets = imgs.to(device), targets.to(device)
+        
         # Extract labels
         labels += targets[:, 1].tolist()
 
@@ -48,10 +55,16 @@ def evaluate(model, path, iou_thres, conf_thres, nms_thres, img_size, batch_size
         with torch.no_grad():
             if model_type == 'yolov3':
                 outputs = model(imgs)
+                print(f' yolo outputs shape before nms: {outputs.shape}')
                 outputs = non_max_suppression(outputs, conf_thres=conf_thres, nms_thres=nms_thres)
+                print(f'yolo outputs after nms: {outputs}')
             elif model_type == 'ssd':
-                outputs = model(imgs, 'eval')
-                outputs[..., :4] = xywh2xyxy(outputs[..., :4])
+                outputs_ = model(imgs, 'eval')
+                outputs_[..., 1:] = outputs_[..., 1:] * img_size#(batch_size, num_classes, topk, 5(conf score + 4(cx,cy,w,h)))
+                outputs = torch.cat([outputs_[:,1,:,1:], outputs_[:,1,:,:1], \
+                                     torch.zeros_like(outputs_[:,0,:,:1])]\
+                                        , dim=-1) # -> (batch_size, topk, 6 (4(cx,cy,w,h) + 1(conf_score) + 1(label) ))
+                print(f'ssd outputs after nms: {outputs}')
 
         sample_metrics += get_batch_statistics(outputs, targets, iou_threshold=iou_thres)
     

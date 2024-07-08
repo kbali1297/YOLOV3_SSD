@@ -166,6 +166,8 @@ def get_batch_statistics(outputs, targets, iou_threshold):
                 if pred_label not in target_labels:
                     continue
 
+                pred_box, target_boxes = pred_box.to('cpu'), target_boxes.to('cpu')
+
                 iou, box_index = bbox_iou(pred_box.unsqueeze(0), target_boxes).max(0)
                 if iou >= iou_threshold and box_index not in detected_boxes:
                     true_positives[pred_i] = 1
@@ -225,6 +227,8 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
     """
 
     # From (center x, center y, width, height) to (x1, y1, x2, y2)
+    print(f'shape of predictions input to nms yolov3: {prediction.shape}') #(8, 1215, 6) [cx,cy,w,h,obj_conf,class_score(s)] class_scores=num of object classes
+    print(f'predictions input to nms yolov3: {prediction}')
     prediction[..., :4] = xywh2xyxy(prediction[..., :4])
     output = [None for _ in range(len(prediction))]
     for image_i, image_pred in enumerate(prediction):
@@ -259,6 +263,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
 
 def build_targets(pred_boxes, pred_cls, target, anchors, ignore_thres):
 
+    #print(f'target shape in build_targets function:{target.shape}')
     BoolTensor = torch.cuda.BoolTensor if pred_boxes.is_cuda else torch.BoolTensor
     FloatTensor = torch.cuda.FloatTensor if pred_boxes.is_cuda else torch.FloatTensor
 

@@ -7,6 +7,8 @@ import torch.nn.functional as F
 
 from utils.parse_config import *
 from utils.utils import build_targets, to_cpu
+#import torch.Tensor as Tensor
+torch.set_printoptions(profile="Full")
 
 
 def create_modules(module_defs):
@@ -358,7 +360,7 @@ class PriorBox:
         self.image_size = int(cfg['min_dim'])
         # number of priors for feature map location (either 4 or 6)
         self.num_priors = len(ast.literal_eval(cfg['aspect_ratios']))
-        self.variance = ast.literal_eval(cfg['variance']) #or [0.1]
+        self.variance = ast.literal_eval(cfg['variances']) #or [0.1]
         self.feature_maps = ast.literal_eval(cfg['feature_maps'])
         self.min_sizes =    ast.literal_eval(cfg['min_sizes'])
         self.max_sizes =    ast.literal_eval(cfg['max_sizes'])
@@ -420,13 +422,14 @@ class L2Norm(nn.Module):
         out = self.weight.unsqueeze(0).unsqueeze(2).unsqueeze(3).expand_as(x) * x
         return out
     
-class Detect(Function):
+class Detect(nn.Module):
     """At test time, Detect is the final layer of SSD.  Decode location preds,
     apply non-maximum suppression to location predictions based on conf
     scores and threshold to a top_k number of output predictions for both
     confidence score and locations.
     """
-    def __init__(self, num_classes, bkg_label, top_k, conf_thresh, nms_thresh):
+    def __init__(self, num_classes, bkg_label, top_k, conf_thresh, nms_thresh, variances):
+        super(Detect, self).__init__()
         self.num_classes = num_classes
         self.background_label = bkg_label
         self.top_k = top_k
@@ -435,7 +438,7 @@ class Detect(Function):
         if nms_thresh <= 0:
             raise ValueError('nms_threshold must be non negative.')
         self.conf_thresh = conf_thresh
-        self.variance = 0.1
+        self.variance = variances
 
     def forward(self, loc_data, conf_data, prior_data):
         """
@@ -455,6 +458,8 @@ class Detect(Function):
 
         # Decode predictions into bboxes.
         for i in range(num):
+            #print(f'loc device: {loc_data[i].get_device()}')
+            #print(f'prior_data device: {prior_data.get_device()}')
             decoded_boxes = decode(loc_data[i], prior_data, self.variance)
             # For each class, perform nms
             conf_scores = conf_preds[i].clone()
@@ -475,6 +480,8 @@ class Detect(Function):
         _, idx = flt[:, :, 0].sort(1, descending=True)
         _, rank = idx.sort(1)
         flt[(rank < self.top_k).unsqueeze(-1).expand_as(flt)].fill_(0)
+        #print(f'output of model: {output}')
+        #print(f'output shape of model: {output.shape}')
         return output
     
 class MultiBoxLoss(nn.Module):
@@ -502,10 +509,10 @@ class MultiBoxLoss(nn.Module):
 
     def __init__(self, num_classes, overlap_thresh, prior_for_matching,
                  bkg_label, neg_mining, neg_pos, neg_overlap, encode_target,
-                 use_gpu=True, variance=0.1):
+                 variances, use_gpu=True):
         super(MultiBoxLoss, self).__init__()
-        self.use_gpu = use_gpu
-        self.num_classes = num_classes
+        self.device = 'cuda:0' if use_gpu else 'cpu'
+        self.num_classes = num_classes + 1# One Extra Background Class
         self.threshold = overlap_thresh
         self.background_label = bkg_label
         self.encode_target = encode_target
@@ -513,7 +520,7 @@ class MultiBoxLoss(nn.Module):
         self.do_neg_mining = neg_mining
         self.negpos_ratio = neg_pos
         self.neg_overlap = neg_overlap
-        self.variance = variance
+        self.variances = variances
 
     def forward(self, predictions, targets):
         """Multibox Loss
@@ -528,63 +535,132 @@ class MultiBoxLoss(nn.Module):
                 shape: [batch_size,num_objs,5] (last idx is the label).
         """
         loc_data, conf_data, priors = predictions
-        num = loc_data.size(0)
+
+        #print(f'num_classes were working with: {self.num_classes}')
+        loc_data, conf_data, priors = loc_data.to(self.device), conf_data.to(self.device), priors.to(self.device)
+        
+        #print(f'loc_data shape: {loc_data.shape}') # (8,8732,4) -> total 8732 anchor/prior boxes for each image
+        #print(f'conf_data shape: {conf_data.shape}') # (8,8732,2)
+        #print(f'priors shape: {priors.shape}') # (8732,4)
+
+        #print(f'loc_data is nan: {loc_data}') # (8,8732,4) -> total 8732 anchor/prior boxes for each image
+        #print(f'conf_data is nan: {conf_data}') # (8,8732,2)
+        #print(f'priors is nan: {priors}')
+
+        batch_size = loc_data.size(0)
         priors = priors[:loc_data.size(1), :]
         num_priors = (priors.size(0))
-        num_classes = self.num_classes
 
         # match priors (default boxes) and ground truth boxes
-        loc_t = torch.Tensor(num, num_priors, 4)
-        conf_t = torch.LongTensor(num, num_priors)
-        for idx in range(num):
-            truths = targets[idx][:, :-1].data
-            labels = targets[idx][:, -1].data
+        loc_t = torch.Tensor(batch_size, num_priors, 4)
+        conf_t = torch.LongTensor(batch_size, num_priors) #(8,8732), (batch_size, num_priors)
+        #print(f'loc_t before: {loc_t}')
+        #print(f'conf_t before: {conf_t}')
+        # targets = targets[ith_image][num_BBs_in_ith_img, 5(object_label + (cx,cy,w,h))]
+        for idx in range(batch_size):
+            truths = targets[idx][:, 1:].data
+            labels = targets[idx][:, 0].data
             defaults = priors.data
-            match(self.threshold, truths, defaults, self.variance, labels,
+            match(self.threshold, truths, defaults, self.variances, labels,
                   loc_t, conf_t, idx)
-        if self.use_gpu:
-            loc_t = loc_t.cuda()
-            conf_t = conf_t.cuda()
+        #print(f'loc_t:{loc_t}')
+        #print(f'conf_t:{conf_t}')
+        #exit(1)
+        #print(f'loc_t shape:{loc_t.shape}')
+        #print(f'conf_t shape:{conf_t.shape}')
+        loc_t = loc_t.to(self.device)
+        conf_t = conf_t.to(self.device)
         # wrap targets
         loc_t = Variable(loc_t, requires_grad=False)
         conf_t = Variable(conf_t, requires_grad=False)
 
-        pos = conf_t > 0
+        # -----------------------------------Localization Loss------------------------
+        pos = conf_t > 0 #(8,8732) Bool array: Entry is true if the there is sufficient confidence that the prior box contains object in that image in batch
         num_pos = pos.sum(dim=1, keepdim=True)
+        
+        
+        #print(f'num_pos shape: {num_pos.shape}')
+        #print(f'num_pos: {num_pos}')
 
         # Localization Loss (Smooth L1)
         # Shape: [batch,num_priors,4]
-        pos_idx = pos.unsqueeze(pos.dim()).expand_as(loc_data)
+        #print(f'pos : {pos}')
+        #print(f'pos shape: {pos.shape}')
+
+        pos_idx = pos.unsqueeze(pos.dim()).expand_as(loc_data) # (batch_size, num_priors, 4); entry is 1 only where the prior boxes for that image have sufficient overlap
+        #print(f'pos_idx: {pos_idx}')
+        #print(f'pos_idx shape: {pos_idx.shape}')
+        
+        #print(f'loc_data: {loc_data}')
         loc_p = loc_data[pos_idx].view(-1, 4)
+        #print(f'loc_p: {loc_p}')
+        #print(f'loc_p shape: {loc_p.shape}')
+
+        #print(f'loc_p shape: {loc_p.shape}') # (num_successfully matching prior boxes to objects in all images in batch,4) 
+        #print(f'loc_p: {loc_p}') #
         loc_t = loc_t[pos_idx].view(-1, 4)
         loss_l = F.smooth_l1_loss(loc_p, loc_t, size_average=False)
 
-        # Compute max conf across batch for hard negative mining
-        batch_conf = conf_data.view(-1, self.num_classes)
-        loss_c = log_sum_exp(batch_conf) - batch_conf.gather(1, conf_t.view(-1, 1))
+        #print(f' conf_data shape: {conf_data.shape}')
+        #print(f' conf_t shape: {conf_t.shape}')
 
-        # Hard Negative Mining
-        loss_c[pos] = 0  # filter out pos boxes for now
-        loss_c = loss_c.view(num, -1)
-        _, loss_idx = loss_c.sort(1, descending=True)
-        _, idx_rank = loss_idx.sort(1)
-        num_pos = pos.long().sum(1, keepdim=True)
-        num_neg = torch.clamp(self.negpos_ratio*num_pos, max=pos.size(1)-1)
-        neg = idx_rank < num_neg.expand_as(idx_rank)
+        #---------------------------------------Confidence loss-------------------
+        n_positive_priors = pos.sum(dim=1) #(batch_size,)
+        n_negative_priors = self.negpos_ratio * n_positive_priors #(batch_size,)
+        
+        N = n_positive_priors.sum() #Number of positive or matching prior boxes
+        loss_c_all = F.cross_entropy(conf_data.view(-1, self.num_classes), conf_t.view(-1), reduce=False) #(batch_size * num_priors,)
 
-        # Confidence Loss Including Positive and Negative Examples
-        pos_idx = pos.unsqueeze(2).expand_as(conf_data)
-        neg_idx = neg.unsqueeze(2).expand_as(conf_data)
-        conf_p = conf_data[(pos_idx+neg_idx).gt(0)].view(-1, self.num_classes)
-        targets_weighted = conf_t[(pos+neg).gt(0)]
-        loss_c = F.cross_entropy(conf_p, targets_weighted, size_average=False)
+        ## Positive Prior Loss
+        loss_c_pos = loss_c_all.view(batch_size, num_priors)[pos]
 
-        # Sum of losses: L(x,c,l,g) = (Lconf(x, c) + αLloc(x,l,g)) / N
+        ## Hard negative Mining for Negative Prior Loss
+        loss_c_neg = loss_c_all.view(batch_size, num_priors).clone()
+        loss_c_neg[pos] = 0 #Loss for positive sample locations is never negative
+        loss_c_neg_sorted, _ = loss_c_neg.sort(dim=1, descending=True)
+        range_hard = torch.LongTensor(range(num_priors)).unsqueeze(0).tile((batch_size,1)).to(self.device)
+        bool_hardest = range_hard < n_negative_priors.unsqueeze(1)
 
-        N = num_pos.data.sum()
-        loss_l /= N
-        loss_c /= N
-        return loss_l, loss_c
+        loss_c_neg = loss_c_neg_sorted[bool_hardest]
+
+        loss_c = (loss_c_pos.sum() + loss_c_neg.sum()).float()
+
+        loss_l, loss_c = loss_l/N, loss_c/N
+
+        return loss_l + loss_c
+
+
+        # # Compute max conf across batch for hard negative mining
+        # batch_conf = conf_data.view(-1, self.num_classes) # 69856, 1
+        # print(f' batch_conf: {batch_conf}')
+        # print(f' batch_conf shape: {batch_conf.shape}')
+        # loss_c = log_sum_exp(batch_conf) - batch_conf.gather(1, conf_t.view(-1, 1))
+
+        # # Hard Negative Mining
+        # #print(f'loc shape: {loss_c}')
+        # #print(f'pos shape: {pos}') # 8X8732
+        # loss_c = loss_c.view(num, -1)
+        # loss_c[pos] = 0  # filter out pos boxes for now
+        # #loss_c = loss_c.view(num, -1)
+        # _, loss_idx = loss_c.sort(1, descending=True)
+        # _, idx_rank = loss_idx.sort(1)
+        # num_pos = pos.long().sum(1, keepdim=True)
+        # num_neg = torch.clamp(self.negpos_ratio*num_pos, max=pos.size(1)-1)
+        # neg = idx_rank < num_neg.expand_as(idx_rank)
+
+        # # Confidence Loss Including Positive and Negative Examples
+        # pos_idx = pos.unsqueeze(2).expand_as(conf_data)
+        # neg_idx = neg.unsqueeze(2).expand_as(conf_data)
+        # conf_p = conf_data[(pos_idx+neg_idx).gt(0)].view(-1, self.num_classes)
+        # targets_weighted = conf_t[(pos+neg).gt(0)]
+        # loss_c = F.cross_entropy(conf_p, targets_weighted, size_average=False)
+
+        # # Sum of losses: L(x,c,l,g) = (Lconf(x, c) + αLloc(x,l,g)) / N
+
+        # N = num_pos.data.sum()
+        # loss_l /= N
+        # loss_c /= N
+        # return loss_l, loss_c
 
 class SSD(nn.Module):
     """Single Shot Multibox Architecture
@@ -611,34 +687,35 @@ class SSD(nn.Module):
         self.module_defs = parse_model_config(config_path)
         #self.hyperparams, self.module_list = create_modules(self.module_defs)
 
-        self.num_classes = num_classes
-
+        self.num_classes = num_classes + 1 #One extra background class
+        self.device = self.module_defs[0]["device"]
         # if mode != "test" and mode != "train":
         #     print("ERROR: mode: " + mode + " not recognized")
         #     return
         
         size = int(self.module_defs[0]["min_dim"])
         if size != 300:
-            print("ERROR: You specified size " + repr(size) + ". However, " +
-              "currently only SSD300 (size=300) is supported!")
+            print("ERROR: You specified size " + repr(size) + ". However, " +"currently only SSD300 (size=300) is supported!")
             return
         
         #print(self.module_defs[1]["base"])
         #print(str(size))
-        
+        self.variances = ast.literal_eval(self.module_defs[0]["variances"])
+
         base_net_layers = ast.literal_eval(self.module_defs[1]["base"])[str(size)]
         extra_net_layers = ast.literal_eval(self.module_defs[1]["extras"])[str(size)] 
         mbox_net_layers = ast.literal_eval(self.module_defs[1]["mbox"])[str(size)] 
 
         base, extras, head = multibox(vgg(base_net_layers, 3),
                                      add_extras(extra_net_layers, 1024),
-                                     mbox_net_layers, num_classes)
+                                     mbox_net_layers, self.num_classes)
         
         #self.cfg = (coco, voc)[num_classes == 21]
 
         self.priorbox = PriorBox(self.module_defs[0])
-        self.priors = Variable(self.priorbox.forward(), volatile=True) # tensor shape : [num_boxes_of_various_sizes_and_aspect_ratios_for_different_feature_maps_of_img i.e 8X8, 16X16
+        #self.priors = Variable(self.priorbox.forward(), volatile=True).to(self.device) # tensor shape : [num_boxes_of_various_sizes_and_aspect_ratios_for_different_feature_maps_of_img i.e 8X8, 16X16
                                                                         #, 4 -> {cx,cy,w,h}] -> [num_priors, 4]
+        self.priors = self.priorbox.forward().to(self.device)
         #self.size = size
 
         # SSD network
@@ -652,7 +729,7 @@ class SSD(nn.Module):
 
         
         self.softmax = nn.Softmax(dim=-1)
-        self.detect = Detect(num_classes, 0, 200, 0.01, 0.45)
+        self.detect = Detect(self.num_classes, 0, 10, 0.01, 0.45, variances=self.variances)
 
     def forward(self, x, mode='train'):
         """Applies network layers and ops on input image(s) x.
@@ -679,6 +756,7 @@ class SSD(nn.Module):
 
         # apply vgg up to conv4_3 relu
         for k in range(23):
+            #print(f'x shape before going to vgg layer {k}: {x.shape}')
             x = self.vgg[k](x)
 
         s = self.L2Norm(x)
@@ -686,14 +764,17 @@ class SSD(nn.Module):
 
         # apply vgg up to fc7
         for k in range(23, len(self.vgg)):
+            #print(f'x shape before going to vgg layer {k}: {x.shape}')
             x = self.vgg[k](x)
         sources.append(x)
 
         # apply extra layers and cache source layer outputs
         for k, v in enumerate(self.extras):
+            #print(f'x shape before going to extra layer {k}: {x.shape}')
             x = F.relu(v(x), inplace=True)
             if k % 2 == 1:
                 sources.append(x)
+        #print(f'x forward pass done -----------------------------------------------')
 
         # apply multibox head to source layers
         for (x, l, c) in zip(sources, self.loc, self.conf):
@@ -714,7 +795,7 @@ class SSD(nn.Module):
                 loc.view(loc.size(0), -1, 4),                   # loc preds
                 self.softmax(conf.view(conf.size(0), -1,
                              self.num_classes)),                # conf preds
-                self.priors.type(type(x.data))                  # default boxes
+                self.priors.type(type(x.data)).to(self.device)  # default boxes
             )
             
         return output

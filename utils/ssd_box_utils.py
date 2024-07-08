@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import torch
 
+torch.set_printoptions(profile="full")
 
 def point_form(boxes):
     """ Convert prior_boxes to (xmin, ymin, xmax, ymax)
@@ -74,8 +75,8 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
     corresponding to both confidence and location preds.
     Args:
         threshold: (float) The overlap threshold used when mathing boxes.
-        truths: (tensor) Ground truth boxes, Shape: [num_obj, num_priors].
-        priors: (tensor) Prior boxes from priorbox layers, Shape: [n_priors,4].
+        truths: (tensor) Ground truth boxes, Shape: [num_obj, 4].
+        priors: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4].
         variances: (tensor) Variances corresponding to each prior coord,
             Shape: [num_priors, 4].
         labels: (tensor) All the class labels for the image, Shape: [num_obj].
@@ -86,10 +87,15 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
         The matched indices corresponding to 1)location and 2)confidence preds.
     """
     # jaccard index
+    #print(f'truths: {truths}')
+    #print(f'truths shape: {truths.shape}')
+    #print(f'priors: {priors}')
+    #print(f'priors shape: {priors.shape}')
     overlaps = jaccard(
-        truths,
+        point_form(truths),
         point_form(priors)
     )
+    #print(f'overlaps: {overlaps}')
     # (Bipartite Matching)
     # [1,num_objects] best prior for each ground truth
     best_prior_overlap, best_prior_idx = overlaps.max(1, keepdim=True)
@@ -104,12 +110,27 @@ def match(threshold, truths, priors, variances, labels, loc_t, conf_t, idx):
     # ensure every gt matches with its prior of max overlap
     for j in range(best_prior_idx.size(0)):
         best_truth_idx[best_prior_idx[j]] = j
+    #matches -> Best overlapping ground truth box coords (cx,cy,w,h) for every prior box
     matches = truths[best_truth_idx]          # Shape: [num_priors,4]
+    #print(f'matches: {matches}')
+    #print(f'matches shape: {matches.shape}')
     conf = labels[best_truth_idx] + 1         # Shape: [num_priors]
+    #print(f'conf: {conf}')
+    #conf = labels
+    #conf[best_truth_idx] = 1
+    #print(f'best truth overlap: {best_truth_overlap}')
     conf[best_truth_overlap < threshold] = 0  # label as background
+    #print(f'num of prior boxes successful: {conf.sum()}')
+    
     loc = encode(matches, priors, variances)
     loc_t[idx] = loc    # [num_priors,4] encoded offsets to learn
-    conf_t[idx] = conf  # [num_priors] top class label for each prior
+                        # [:,:2] represent the distances between the best matching ground truth box to that prior box center coords
+                        # [:,2:] represent the log ratio between the widths and heights of the best matching ground truth box to that prior box  
+                        # Network tries to bring its own loc_p close to loc_t, implicitly learning the location of the ground truth boxes itself to
+                        # successfully reproduce loc_t 
+
+    conf_t[idx] = conf  # [num_priors] top class label for each prior, 
+                        # each entry out of num_priors is <=1 iff the overlap of prior box is more than threshold for its best fitting ground truth box 
 
 
 def encode(matched, priors, variances):
@@ -126,12 +147,15 @@ def encode(matched, priors, variances):
     """
 
     # dist b/t match center and prior's center
-    g_cxcy = (matched[:, :2] + matched[:, 2:])/2 - priors[:, :2]
+    g_cxcy = matched[:, :2] - priors[:, :2]
     # encode variance
     g_cxcy /= (variances[0] * priors[:, 2:])
     # match wh / prior wh
-    g_wh = (matched[:, 2:] - matched[:, :2]) / priors[:, 2:]
+    g_wh = matched[:, 2:] / priors[:, 2:]
+    #print(f' priors going to be used: {priors}')
+    #print(f' g_wh val in encode:{g_wh}')
     g_wh = torch.log(g_wh) / variances[1]
+    #print(f' g_wh val in encode after log:{g_wh}')
     # return target for smooth_l1_loss
     return torch.cat([g_cxcy, g_wh], 1)  # [num_priors,4]
 

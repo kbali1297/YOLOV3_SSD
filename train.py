@@ -19,7 +19,7 @@ from utils.utils import *
 if __name__ == "__main__":
     opt = dict()
     opt["epochs"] = 100
-    opt["batch_size"] = 8
+    opt["batch_size"] = 4
     opt["gradient_accumulations"] = 2
     opt["model_def"] = "config/ssd-kitti.cfg"
     opt["data_config"] = "config/kitti_1cls.data"
@@ -27,14 +27,16 @@ if __name__ == "__main__":
     opt["img_size"] = 300
     opt["evaluation_interval"] = 1
     opt["compute_map"] = False
-    opt["multiscale_training"] = True
+    opt["multiscale_training"] = False
     opt["verbose"] = False
+    opt["use_gpu"] = True
 
     for key in opt:
         print(f"{key}: {opt[key]}")
 
     # Check if GPU is available
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = 'cuda:0' if opt["use_gpu"] else 'cpu'
 
     # Get data configuration
     data_config = parse_data_config(opt["data_config"])
@@ -121,7 +123,7 @@ if __name__ == "__main__":
         for epoch in range(opt["epochs"]):
             model.train()
             start_time = time.time()
-
+            train_loss = 0
             # select smaller batches and train batch-by-batch
             for batch_i, (img_path, imgs, targets) in enumerate(tqdm.tqdm(dataloader,
                                                                         desc=f"Training Epoch {epoch}/{opt['epochs']}")):
@@ -133,6 +135,8 @@ if __name__ == "__main__":
                 # Inference and backpropagation
                 loss, outputs = model(imgs, targets)
                 loss.backward()
+
+                train_loss += loss.item()
 
                 if batches_done % opt["gradient_accumulations"] == 0:
                     # Accumulates gradient before each step
@@ -175,6 +179,7 @@ if __name__ == "__main__":
 
                 model.seen += imgs.size(0)
 
+            print(f'Epoch {epoch} Loss: {train_loss}')
             # Evaluate model after finishing an epoch
             if epoch % opt["evaluation_interval"] == 0:
                 print("---- Evaluating Model ----")
@@ -186,7 +191,7 @@ if __name__ == "__main__":
                     conf_thres=0.5,
                     nms_thres=0.5,
                     img_size=opt["img_size"],
-                    batch_size=8,
+                    batch_size=4,
                     num_classes=num_classes,
                     model_type='yolov3'
                 )
@@ -208,29 +213,84 @@ if __name__ == "__main__":
                 print(f"Epoch {epoch} finished! Saving model at yolov3.pth\n\n\n")
 
     elif model_type=="ssd":
-        model = SSD(opt["model_def"], num_classes=num_classes)
+        model = SSD(opt["model_def"], num_classes=num_classes).to(device)
         loss_module = MultiBoxLoss(num_classes=num_classes, overlap_thresh=0.5, 
                                    prior_for_matching=True, bkg_label=0, neg_mining=True, 
-                                   neg_pos=3, neg_overlap=0.5, encode_target=False)
+                                   neg_pos=3, neg_overlap=0.5, encode_target=False, variances=model.variances)
         
         optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
         for epoch in range(opt["epochs"]):
             model.train()
-
+            start_time = time.time()
+            continue_flag=0
+            train_loss = 0
             for batch_i, (img_path, img, targets) in enumerate(tqdm.tqdm(dataloader,
                                                             desc=f"Training Epoch {epoch}/{opt['epochs']}")):
 
-                predictions = model(img)
-                targets = Variable(targets)
+                #print(f'Input Img batch shape: {img.shape}')
+                #print(f'Target Img batch shape: {targets.shape}')
+                predictions = model(img.to(device))
+                targets = Variable(targets).to(device)
 
-                print(f'targets shape: {targets.shape}')
+                # if batch_i !=2 : 
+                #     continue
+                # else:
+                #     print(targets)
+                # print(f'targets shape: {targets.shape}')
                 #print(f'predictions shape: {predictions.shape}')
-                loss_loc, loss_conf = loss_module(predictions, targets)
+
+                targets_ssd = [None] * img.shape[0]
+                for k in range(targets.shape[0]):
+                    #print(targets[k,0])
+                    if targets_ssd[int(targets[k,0])] == None:
+                        targets_ssd[int(targets[k,0])] = targets[k:k+1,1:]
+                    else:
+                        targets_ssd[int(targets[k,0])] = \
+                                torch.cat([targets_ssd[int(targets[k,0])], \
+                                            targets[k:k+1,1:]], dim=0)
+
+                for i in range(len(targets_ssd)):
+                    if targets_ssd[i] == None:
+                        print(f' check {i} : {img_path[i]}')
+                        continue_flag=1
+
+                if continue_flag==1: 
+                    continue_flag=0
+                    continue
+                #print(f'targets: {targets}')
+                #print(f'targets_ssd: {targets_ssd}')
+
+                loss = loss_module(predictions, targets_ssd)
+                #try:
+                #    loss_loc, loss_conf = loss_module(predictions, targets_ssd)
+                #except:
+                #    print('One of the targets is None')
+                #    print(f'targets: {targets}')
+                #    print(f'targets_ssd: {targets_ssd}')
+                #    exit(1)
 
                 optimizer.zero_grad()
-                (loss_loc + loss_conf).backward()
+                loss.backward()
                 optimizer.step()
 
+                train_loss += loss.item()
+                # ----------------
+                #   Log progress
+                # ----------------
+
+                log_str = "\n---- [Epoch %d/%d, Batch %d/%d] ----\n" % (epoch, opt["epochs"], batch_i, len(dataloader))
+
+                log_str += f"\nTotal loss {to_cpu(loss).item()}"
+
+                # Determine approximate time left for epoch
+                epoch_batches_left = len(dataloader) - (batch_i + 1)
+                time_left = datetime.timedelta(seconds=epoch_batches_left * (time.time() - start_time) / (batch_i + 1))
+                log_str += f"\n---- ETA {time_left}"
+
+                if opt["verbose"]:
+                    print(log_str)
+
+            print(f'Epoch {epoch} Loss: {train_loss:.2f}')
             # Evaluate model after finishing an epoch
             if epoch % opt["evaluation_interval"] == 0:
                 print("---- Evaluating Model ----")
@@ -242,7 +302,7 @@ if __name__ == "__main__":
                     conf_thres=0.5,
                     nms_thres=0.5,
                     img_size=opt["img_size"],
-                    batch_size=8,
+                    batch_size=4,
                     num_classes=num_classes,
                     model_type='ssd'
                 )
@@ -255,7 +315,6 @@ if __name__ == "__main__":
                         ("validation/mAP", AP.mean()),
                         ("validation/f1", f1.mean()),
                     ]
-
                     print(f"---- AP class Car: {round(AP.mean(), 2)}")
                 else:
                     print("---- AP not measured (no detections found by model)")
