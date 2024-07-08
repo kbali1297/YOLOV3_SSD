@@ -227,8 +227,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
     """
 
     # From (center x, center y, width, height) to (x1, y1, x2, y2)
-    print(f'shape of predictions input to nms yolov3: {prediction.shape}') #(8, 1215, 6) [cx,cy,w,h,obj_conf,class_score(s)] class_scores=num of object classes
-    print(f'predictions input to nms yolov3: {prediction}')
+     # [cx,cy,w,h,obj_conf,class_score(s)] class_scores=num of object classes
     prediction[..., :4] = xywh2xyxy(prediction[..., :4])
     output = [None for _ in range(len(prediction))]
     for image_i, image_pred in enumerate(prediction):
