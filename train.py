@@ -14,14 +14,28 @@ from utils.augmentations import *
 from utils.datasets import *
 from utils.parse_config import *
 from utils.utils import *
-## Add argparse to toggle between models 
+
+import argparse
+
+parser = argparse.ArgumentParser(description='CmdLine Parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument(  '--model', default='SSD', type=str)
+
+pargs = parser.parse_args()
+params = {}
+params.update(vars(pargs))
+
 
 if __name__ == "__main__":
     opt = dict()
     opt["epochs"] = 100
     opt["batch_size"] = 4
     opt["gradient_accumulations"] = 2
-    opt["model_def"] = "config/ssd-kitti.cfg"
+
+    if params['model'] == 'SSD': 
+        opt["model_def"] = "config/ssd-kitti.cfg"
+    elif params["model"] == 'YOLO':
+        opt["model_def"] = "config/yolov3-kitti-tiny_1cls.cfg"
+    
     opt["data_config"] = "config/kitti_1cls.data"
     opt["n_cpu"] = 1
     opt["img_size"] = 300
@@ -204,6 +218,7 @@ if __name__ == "__main__":
                         ("validation/mAP", AP.mean()),
                         ("validation/f1", f1.mean()),
                     ]
+                    print(f'Epoch: {epoch}, Precision: {precision.mean():.2f},  Recall: {recall.mean():.2f}, mAP: {AP.mean():.2f}, F1: {f1.mean():.2f}')
 
                     print(f"---- AP class Car: {round(AP.mean(), 2)}")
                 else:
@@ -315,6 +330,9 @@ if __name__ == "__main__":
                         ("validation/mAP", AP.mean()),
                         ("validation/f1", f1.mean()),
                     ]
+
+                    print(f'Epoch: {epoch}, Precision: {precision.mean():.2f},  Recall: {recall.mean():.2f}, mAP: {AP.mean():.2f}, F1: {f1.mean():.2f}')
+
                     print(f"---- AP class Car: {round(AP.mean(), 2)}")
                 else:
                     print("---- AP not measured (no detections found by model)")
