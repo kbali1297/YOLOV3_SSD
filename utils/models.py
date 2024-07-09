@@ -676,16 +676,29 @@ class SSD(nn.Module):
         loc = list()
         conf = list()
 
+        # Added res skip connections for better training stability
+        vgg_skip_con_list = [2,7,12,14,19, 21, 26, 28, 33]
         # apply vgg up to conv4_3 relu
         for k in range(23):
-            x = self.vgg[k](x)
+            if k in vgg_skip_con_list:
+                try:
+                    x = self.vgg[k](x) + x
+                except: print(f'Problematic layer: {k} ')
+            else: 
+                x = self.vgg[k](x)
 
         s = self.L2Norm(x)
         sources.append(s)
 
         # apply vgg up to fc7
         for k in range(23, len(self.vgg)):
-            x = self.vgg[k](x)
+            if k in vgg_skip_con_list:
+                try:
+                    x = self.vgg[k](x) + x
+                except: print(f'Problematic layer: {k} ')
+            else: 
+                x = self.vgg[k](x)
+
         sources.append(x)
 
         # apply extra layers and cache source layer outputs
