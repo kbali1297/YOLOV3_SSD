@@ -468,7 +468,7 @@ class Detect(nn.Module):
                 l_mask = c_mask.unsqueeze(1).expand_as(decoded_boxes)
                 boxes = decoded_boxes[l_mask].view(-1, 4)
                 # idx of highest scoring and non-overlapping boxes per class
-                ids, count = nms(boxes, scores, self.nms_thresh, self.top_k)
+                ids, count = nms(boxes, scores, self.nms_thresh, self.conf_thresh)
                 output[i, cl, :count] = \
                     torch.cat((scores[ids[:count]].unsqueeze(1),
                                boxes[ids[:count]]), 1)
@@ -651,7 +651,7 @@ class SSD(nn.Module):
 
         
         self.softmax = nn.Softmax(dim=-1)
-        self.detect = Detect(self.num_classes, 0, 10, 0.01, 0.45, variances=self.variances)
+        self.detect = Detect(self.num_classes, 0, 100, 0.5, 0.5, variances=self.variances)
 
     def forward(self, x, mode='train'):
         """Applies network layers and ops on input image(s) x.

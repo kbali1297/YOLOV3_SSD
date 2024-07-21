@@ -111,9 +111,17 @@ if __name__ == "__main__":
         # Initiate model
         model = Darknet(opt["model_def"], img_size=opt["img_size"]).to(device)
         model.apply(weights_init_normal)
+        
+        # Load model
+        if os.path.exists('yolov3.pth'):
+            print(f'Loading saved model....')
+            model.load_state_dict(torch.load('yolov3.pth'))
+        
+        
 
         # Define optimizer
-        optimizer = torch.optim.Adam(model.parameters())
+        lr = 1e-3
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
         # Define metrics
         metrics = [
@@ -228,17 +236,29 @@ if __name__ == "__main__":
                 print(f"Epoch {epoch} finished! Saving model at yolov3.pth\n\n\n")
 
     elif model_type=="ssd":
+        # Instantiate Model
         model = SSD(opt["model_def"], num_classes=num_classes).to(device)
+        
+        # Load Model
+        if os.path.exists('ssd.pth'):
+            print(f'Loading saved model....')
+            model.load_state_dict(torch.load('ssd.pth'))
+        
         loss_module = MultiBoxLoss(num_classes=num_classes, overlap_thresh=0.5, 
                                    prior_for_matching=True, bkg_label=0, neg_mining=True, 
                                    neg_pos=3, neg_overlap=0.5, encode_target=False, variances=model.variances)
         
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+        lr=1e-4
+        optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         for epoch in range(opt["epochs"]):
             model.train()
             start_time = time.time()
             continue_flag=0
             train_loss = 0
+            # if (epoch+1)%40 == 0:
+            #     lr *= 0.9
+            #     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+
             for batch_i, (img_path, img, targets) in enumerate(tqdm.tqdm(dataloader,
                                                             desc=f"Training Epoch {epoch}/{opt['epochs']}")):
 
@@ -247,16 +267,8 @@ if __name__ == "__main__":
                 predictions = model(img.to(device))
                 targets = Variable(targets).to(device)
 
-                # if batch_i !=2 : 
-                #     continue
-                # else:
-                #     print(targets)
-                # print(f'targets shape: {targets.shape}')
-                #print(f'predictions shape: {predictions.shape}')
-
                 targets_ssd = [None] * img.shape[0]
                 for k in range(targets.shape[0]):
-                    #print(targets[k,0])
                     if targets_ssd[int(targets[k,0])] == None:
                         targets_ssd[int(targets[k,0])] = targets[k:k+1,1:]
                     else:
@@ -272,17 +284,8 @@ if __name__ == "__main__":
                 if continue_flag==1: 
                     continue_flag=0
                     continue
-                #print(f'targets: {targets}')
-                #print(f'targets_ssd: {targets_ssd}')
 
                 loss = loss_module(predictions, targets_ssd)
-                #try:
-                #    loss_loc, loss_conf = loss_module(predictions, targets_ssd)
-                #except:
-                #    print('One of the targets is None')
-                #    print(f'targets: {targets}')
-                #    print(f'targets_ssd: {targets_ssd}')
-                #    exit(1)
 
                 optimizer.zero_grad()
                 loss.backward()

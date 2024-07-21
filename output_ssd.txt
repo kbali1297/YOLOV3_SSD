@@ -1,0 +1,1693 @@
+epochs: 100
+batch_size: 4
+gradient_accumulations: 2
+model_def: config/ssd-kitti.cfg
+data_config: config/kitti_1cls.data
+n_cpu: 1
+img_size: 300
+evaluation_interval: 1
+compute_map: False
+multiscale_training: False
+verbose: False
+use_gpu: True
+Epoch 0 Loss: 285.73
+---- Evaluating Model ----
+Epoch: 0, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 0 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 1 Loss: 229.30
+---- Evaluating Model ----
+Epoch: 1, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 1 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 2 Loss: 220.05
+---- Evaluating Model ----
+Epoch: 2, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 2 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 3 Loss: 217.16
+---- Evaluating Model ----
+Epoch: 3, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 3 finished! Saving model at ssd.pth
+
+
+
+Epoch 4 Loss: 217.53
+---- Evaluating Model ----
+Epoch: 4, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 4 finished! Saving model at ssd.pth
+
+
+
+Epoch 5 Loss: 218.55
+---- Evaluating Model ----
+Epoch: 5, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 5 finished! Saving model at ssd.pth
+
+
+
+Epoch 6 Loss: 214.48
+---- Evaluating Model ----
+Epoch: 6, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 6 finished! Saving model at ssd.pth
+
+
+
+Epoch 7 Loss: 210.66
+---- Evaluating Model ----
+Epoch: 7, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 7 finished! Saving model at ssd.pth
+
+
+
+Epoch 8 Loss: 202.70
+---- Evaluating Model ----
+Epoch: 8, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 8 finished! Saving model at ssd.pth
+
+
+
+Epoch 9 Loss: 199.45
+---- Evaluating Model ----
+Epoch: 9, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 9 finished! Saving model at ssd.pth
+
+
+
+Epoch 10 Loss: 193.17
+---- Evaluating Model ----
+Epoch: 10, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 10 finished! Saving model at ssd.pth
+
+
+
+Epoch 11 Loss: 191.99
+---- Evaluating Model ----
+Epoch: 11, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 11 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 12 Loss: 183.01
+---- Evaluating Model ----
+Epoch: 12, Precision: 0.00,  Recall: 0.00, mAP: 0.00, F1: 0.00
+---- AP class Car: 0.0
+Epoch 12 finished! Saving model at ssd.pth
+
+
+
+Epoch 13 Loss: 182.15
+---- Evaluating Model ----
+Epoch: 13, Precision: 0.90,  Recall: 0.10, mAP: 0.09, F1: 0.17
+---- AP class Car: 0.09
+Epoch 13 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 14 Loss: 172.91
+---- Evaluating Model ----
+Epoch: 14, Precision: 1.00,  Recall: 0.05, mAP: 0.05, F1: 0.10
+---- AP class Car: 0.05
+Epoch 14 finished! Saving model at ssd.pth
+
+
+
+Epoch 15 Loss: 172.16
+---- Evaluating Model ----
+Epoch: 15, Precision: 0.80,  Recall: 0.22, mAP: 0.20, F1: 0.34
+---- AP class Car: 0.2
+Epoch 15 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 16 Loss: 166.80
+---- Evaluating Model ----
+Epoch: 16, Precision: 0.78,  Recall: 0.19, mAP: 0.17, F1: 0.31
+---- AP class Car: 0.17
+Epoch 16 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000084.png
+Epoch 17 Loss: 158.70
+---- Evaluating Model ----
+Epoch: 17, Precision: 0.96,  Recall: 0.25, mAP: 0.24, F1: 0.39
+---- AP class Car: 0.24
+Epoch 17 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 18 Loss: 161.69
+---- Evaluating Model ----
+Epoch: 18, Precision: 0.87,  Recall: 0.29, mAP: 0.27, F1: 0.44
+---- AP class Car: 0.27
+Epoch 18 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 19 Loss: 157.41
+---- Evaluating Model ----
+Epoch: 19, Precision: 0.92,  Recall: 0.13, mAP: 0.13, F1: 0.23
+---- AP class Car: 0.13
+Epoch 19 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 20 Loss: 160.15
+---- Evaluating Model ----
+Epoch: 20, Precision: 0.88,  Recall: 0.32, mAP: 0.31, F1: 0.47
+---- AP class Car: 0.31
+Epoch 20 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 21 Loss: 152.42
+---- Evaluating Model ----
+Epoch: 21, Precision: 0.96,  Recall: 0.24, mAP: 0.23, F1: 0.38
+---- AP class Car: 0.23
+Epoch 21 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 22 Loss: 150.49
+---- Evaluating Model ----
+Epoch: 22, Precision: 0.76,  Recall: 0.45, mAP: 0.39, F1: 0.57
+---- AP class Car: 0.39
+Epoch 22 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 23 Loss: 146.33
+---- Evaluating Model ----
+Epoch: 23, Precision: 0.85,  Recall: 0.31, mAP: 0.29, F1: 0.46
+---- AP class Car: 0.29
+Epoch 23 finished! Saving model at ssd.pth
+
+
+
+Epoch 24 Loss: 148.91
+---- Evaluating Model ----
+Epoch: 24, Precision: 0.78,  Recall: 0.39, mAP: 0.32, F1: 0.52
+---- AP class Car: 0.32
+Epoch 24 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 25 Loss: 141.79
+---- Evaluating Model ----
+Epoch: 25, Precision: 0.78,  Recall: 0.45, mAP: 0.39, F1: 0.57
+---- AP class Car: 0.39
+Epoch 25 finished! Saving model at ssd.pth
+
+
+
+Epoch 26 Loss: 140.73
+---- Evaluating Model ----
+Epoch: 26, Precision: 0.73,  Recall: 0.49, mAP: 0.40, F1: 0.59
+---- AP class Car: 0.4
+Epoch 26 finished! Saving model at ssd.pth
+
+
+
+Epoch 27 Loss: 139.62
+---- Evaluating Model ----
+Epoch: 27, Precision: 0.85,  Recall: 0.42, mAP: 0.38, F1: 0.56
+---- AP class Car: 0.38
+Epoch 27 finished! Saving model at ssd.pth
+
+
+
+Epoch 28 Loss: 141.86
+---- Evaluating Model ----
+Epoch: 28, Precision: 0.82,  Recall: 0.39, mAP: 0.36, F1: 0.53
+---- AP class Car: 0.36
+Epoch 28 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 29 Loss: 135.91
+---- Evaluating Model ----
+Epoch: 29, Precision: 0.74,  Recall: 0.48, mAP: 0.41, F1: 0.58
+---- AP class Car: 0.41
+Epoch 29 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 30 Loss: 133.39
+---- Evaluating Model ----
+Epoch: 30, Precision: 0.72,  Recall: 0.53, mAP: 0.44, F1: 0.61
+---- AP class Car: 0.44
+Epoch 30 finished! Saving model at ssd.pth
+
+
+
+Epoch 31 Loss: 135.72
+---- Evaluating Model ----
+Epoch: 31, Precision: 0.62,  Recall: 0.59, mAP: 0.49, F1: 0.61
+---- AP class Car: 0.49
+Epoch 31 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 32 Loss: 132.01
+---- Evaluating Model ----
+Epoch: 32, Precision: 0.69,  Recall: 0.56, mAP: 0.48, F1: 0.62
+---- AP class Car: 0.48
+Epoch 32 finished! Saving model at ssd.pth
+
+
+
+Epoch 33 Loss: 131.73
+---- Evaluating Model ----
+Epoch: 33, Precision: 0.72,  Recall: 0.54, mAP: 0.46, F1: 0.62
+---- AP class Car: 0.46
+Epoch 33 finished! Saving model at ssd.pth
+
+
+
+Epoch 34 Loss: 128.82
+---- Evaluating Model ----
+Epoch: 34, Precision: 0.74,  Recall: 0.55, mAP: 0.48, F1: 0.63
+---- AP class Car: 0.48
+Epoch 34 finished! Saving model at ssd.pth
+
+
+
+Epoch 35 Loss: 128.30
+---- Evaluating Model ----
+Epoch: 35, Precision: 0.73,  Recall: 0.62, mAP: 0.52, F1: 0.67
+---- AP class Car: 0.52
+Epoch 35 finished! Saving model at ssd.pth
+
+
+
+Epoch 36 Loss: 130.37
+---- Evaluating Model ----
+Epoch: 36, Precision: 0.79,  Recall: 0.54, mAP: 0.48, F1: 0.64
+---- AP class Car: 0.48
+Epoch 36 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000041.png
+Epoch 37 Loss: 122.29
+---- Evaluating Model ----
+Epoch: 37, Precision: 0.70,  Recall: 0.56, mAP: 0.46, F1: 0.62
+---- AP class Car: 0.46
+Epoch 37 finished! Saving model at ssd.pth
+
+
+
+Epoch 38 Loss: 122.12
+---- Evaluating Model ----
+Epoch: 38, Precision: 0.77,  Recall: 0.57, mAP: 0.50, F1: 0.65
+---- AP class Car: 0.5
+Epoch 38 finished! Saving model at ssd.pth
+
+
+
+Epoch 39 Loss: 123.22
+---- Evaluating Model ----
+Epoch: 39, Precision: 0.72,  Recall: 0.60, mAP: 0.51, F1: 0.65
+---- AP class Car: 0.51
+Epoch 39 finished! Saving model at ssd.pth
+
+
+
+Epoch 40 Loss: 123.89
+---- Evaluating Model ----
+Epoch: 40, Precision: 0.68,  Recall: 0.58, mAP: 0.49, F1: 0.62
+---- AP class Car: 0.49
+Epoch 40 finished! Saving model at ssd.pth
+
+
+
+Epoch 41 Loss: 120.07
+---- Evaluating Model ----
+Epoch: 41, Precision: 0.68,  Recall: 0.68, mAP: 0.51, F1: 0.68
+---- AP class Car: 0.51
+Epoch 41 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 42 Loss: 114.62
+---- Evaluating Model ----
+Epoch: 42, Precision: 0.76,  Recall: 0.60, mAP: 0.49, F1: 0.67
+---- AP class Car: 0.49
+Epoch 42 finished! Saving model at ssd.pth
+
+
+
+Epoch 43 Loss: 117.82
+---- Evaluating Model ----
+Epoch: 43, Precision: 0.74,  Recall: 0.62, mAP: 0.50, F1: 0.68
+---- AP class Car: 0.5
+Epoch 43 finished! Saving model at ssd.pth
+
+
+
+Epoch 44 Loss: 114.35
+---- Evaluating Model ----
+Epoch: 44, Precision: 0.72,  Recall: 0.62, mAP: 0.54, F1: 0.67
+---- AP class Car: 0.54
+Epoch 44 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 45 Loss: 111.59
+---- Evaluating Model ----
+Epoch: 45, Precision: 0.73,  Recall: 0.60, mAP: 0.53, F1: 0.66
+---- AP class Car: 0.53
+Epoch 45 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 46 Loss: 107.83
+---- Evaluating Model ----
+Epoch: 46, Precision: 0.72,  Recall: 0.66, mAP: 0.52, F1: 0.69
+---- AP class Car: 0.52
+Epoch 46 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000084.png
+Epoch 47 Loss: 108.88
+---- Evaluating Model ----
+Epoch: 47, Precision: 0.66,  Recall: 0.68, mAP: 0.49, F1: 0.67
+---- AP class Car: 0.49
+Epoch 47 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 48 Loss: 107.22
+---- Evaluating Model ----
+Epoch: 48, Precision: 0.73,  Recall: 0.58, mAP: 0.51, F1: 0.65
+---- AP class Car: 0.51
+Epoch 48 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 49 Loss: 110.39
+---- Evaluating Model ----
+Epoch: 49, Precision: 0.72,  Recall: 0.60, mAP: 0.52, F1: 0.65
+---- AP class Car: 0.52
+Epoch 49 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 50 Loss: 103.46
+---- Evaluating Model ----
+Epoch: 50, Precision: 0.75,  Recall: 0.66, mAP: 0.55, F1: 0.70
+---- AP class Car: 0.55
+Epoch 50 finished! Saving model at ssd.pth
+
+
+
+Epoch 51 Loss: 106.81
+---- Evaluating Model ----
+Epoch: 51, Precision: 0.73,  Recall: 0.62, mAP: 0.52, F1: 0.67
+---- AP class Car: 0.52
+Epoch 51 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000041.png
+Epoch 52 Loss: 100.12
+---- Evaluating Model ----
+Epoch: 52, Precision: 0.69,  Recall: 0.67, mAP: 0.55, F1: 0.68
+---- AP class Car: 0.55
+Epoch 52 finished! Saving model at ssd.pth
+
+
+
+Epoch 53 Loss: 106.86
+---- Evaluating Model ----
+Epoch: 53, Precision: 0.69,  Recall: 0.60, mAP: 0.50, F1: 0.64
+---- AP class Car: 0.5
+Epoch 53 finished! Saving model at ssd.pth
+
+
+
+Epoch 54 Loss: 106.16
+---- Evaluating Model ----
+Epoch: 54, Precision: 0.62,  Recall: 0.62, mAP: 0.49, F1: 0.62
+---- AP class Car: 0.49
+Epoch 54 finished! Saving model at ssd.pth
+
+
+
+Epoch 55 Loss: 100.07
+---- Evaluating Model ----
+Epoch: 55, Precision: 0.73,  Recall: 0.59, mAP: 0.52, F1: 0.65
+---- AP class Car: 0.52
+Epoch 55 finished! Saving model at ssd.pth
+
+
+
+Epoch 56 Loss: 105.38
+---- Evaluating Model ----
+Epoch: 56, Precision: 0.66,  Recall: 0.68, mAP: 0.56, F1: 0.67
+---- AP class Car: 0.56
+Epoch 56 finished! Saving model at ssd.pth
+
+
+
+Epoch 57 Loss: 99.45
+---- Evaluating Model ----
+Epoch: 57, Precision: 0.64,  Recall: 0.74, mAP: 0.63, F1: 0.69
+---- AP class Car: 0.63
+Epoch 57 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000084.png
+Epoch 58 Loss: 94.19
+---- Evaluating Model ----
+Epoch: 58, Precision: 0.61,  Recall: 0.63, mAP: 0.52, F1: 0.62
+---- AP class Car: 0.52
+Epoch 58 finished! Saving model at ssd.pth
+
+
+
+Epoch 59 Loss: 98.06
+---- Evaluating Model ----
+Epoch: 59, Precision: 0.71,  Recall: 0.69, mAP: 0.61, F1: 0.70
+---- AP class Car: 0.61
+Epoch 59 finished! Saving model at ssd.pth
+
+
+
+Epoch 60 Loss: 99.25
+---- Evaluating Model ----
+Epoch: 60, Precision: 0.66,  Recall: 0.70, mAP: 0.56, F1: 0.68
+---- AP class Car: 0.56
+Epoch 60 finished! Saving model at ssd.pth
+
+
+
+Epoch 61 Loss: 97.91
+---- Evaluating Model ----
+Epoch: 61, Precision: 0.69,  Recall: 0.71, mAP: 0.59, F1: 0.70
+---- AP class Car: 0.59
+Epoch 61 finished! Saving model at ssd.pth
+
+
+
+Epoch 62 Loss: 93.89
+---- Evaluating Model ----
+Epoch: 62, Precision: 0.68,  Recall: 0.68, mAP: 0.58, F1: 0.68
+---- AP class Car: 0.58
+Epoch 62 finished! Saving model at ssd.pth
+
+
+
+Epoch 63 Loss: 93.26
+---- Evaluating Model ----
+Epoch: 63, Precision: 0.71,  Recall: 0.66, mAP: 0.54, F1: 0.68
+---- AP class Car: 0.54
+Epoch 63 finished! Saving model at ssd.pth
+
+
+
+Epoch 64 Loss: 92.80
+---- Evaluating Model ----
+Epoch: 64, Precision: 0.66,  Recall: 0.61, mAP: 0.49, F1: 0.64
+---- AP class Car: 0.49
+Epoch 64 finished! Saving model at ssd.pth
+
+
+
+Epoch 65 Loss: 96.21
+---- Evaluating Model ----
+Epoch: 65, Precision: 0.77,  Recall: 0.63, mAP: 0.54, F1: 0.69
+---- AP class Car: 0.54
+Epoch 65 finished! Saving model at ssd.pth
+
+
+
+Epoch 66 Loss: 94.12
+---- Evaluating Model ----
+Epoch: 66, Precision: 0.68,  Recall: 0.69, mAP: 0.55, F1: 0.68
+---- AP class Car: 0.55
+Epoch 66 finished! Saving model at ssd.pth
+
+
+
+Epoch 67 Loss: 89.04
+---- Evaluating Model ----
+Epoch: 67, Precision: 0.71,  Recall: 0.65, mAP: 0.55, F1: 0.67
+---- AP class Car: 0.55
+Epoch 67 finished! Saving model at ssd.pth
+
+
+
+Epoch 68 Loss: 87.10
+---- Evaluating Model ----
+Epoch: 68, Precision: 0.65,  Recall: 0.71, mAP: 0.57, F1: 0.68
+---- AP class Car: 0.57
+Epoch 68 finished! Saving model at ssd.pth
+
+
+
+Epoch 69 Loss: 85.02
+---- Evaluating Model ----
+Epoch: 69, Precision: 0.73,  Recall: 0.68, mAP: 0.54, F1: 0.70
+---- AP class Car: 0.54
+Epoch 69 finished! Saving model at ssd.pth
+
+
+
+Epoch 70 Loss: 86.86
+---- Evaluating Model ----
+Epoch: 70, Precision: 0.77,  Recall: 0.69, mAP: 0.59, F1: 0.73
+---- AP class Car: 0.59
+Epoch 70 finished! Saving model at ssd.pth
+
+
+
+Epoch 71 Loss: 87.74
+---- Evaluating Model ----
+Epoch: 71, Precision: 0.67,  Recall: 0.66, mAP: 0.51, F1: 0.66
+---- AP class Car: 0.51
+Epoch 71 finished! Saving model at ssd.pth
+
+
+
+Epoch 72 Loss: 87.79
+---- Evaluating Model ----
+Epoch: 72, Precision: 0.67,  Recall: 0.71, mAP: 0.57, F1: 0.69
+---- AP class Car: 0.57
+Epoch 72 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 73 Loss: 84.07
+---- Evaluating Model ----
+Epoch: 73, Precision: 0.72,  Recall: 0.68, mAP: 0.56, F1: 0.70
+---- AP class Car: 0.56
+Epoch 73 finished! Saving model at ssd.pth
+
+
+
+Epoch 74 Loss: 86.24
+---- Evaluating Model ----
+Epoch: 74, Precision: 0.73,  Recall: 0.72, mAP: 0.58, F1: 0.72
+---- AP class Car: 0.58
+Epoch 74 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 75 Loss: 79.56
+---- Evaluating Model ----
+Epoch: 75, Precision: 0.68,  Recall: 0.70, mAP: 0.61, F1: 0.69
+---- AP class Car: 0.61
+Epoch 75 finished! Saving model at ssd.pth
+
+
+
+Epoch 76 Loss: 91.09
+---- Evaluating Model ----
+Epoch: 76, Precision: 0.74,  Recall: 0.67, mAP: 0.55, F1: 0.70
+---- AP class Car: 0.55
+Epoch 76 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000041.png
+Epoch 77 Loss: 81.46
+---- Evaluating Model ----
+Epoch: 77, Precision: 0.67,  Recall: 0.67, mAP: 0.54, F1: 0.67
+---- AP class Car: 0.54
+Epoch 77 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 78 Loss: 76.76
+---- Evaluating Model ----
+Epoch: 78, Precision: 0.75,  Recall: 0.73, mAP: 0.63, F1: 0.74
+---- AP class Car: 0.63
+Epoch 78 finished! Saving model at ssd.pth
+
+
+
+Epoch 79 Loss: 84.13
+---- Evaluating Model ----
+Epoch: 79, Precision: 0.70,  Recall: 0.74, mAP: 0.61, F1: 0.72
+---- AP class Car: 0.61
+Epoch 79 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 80 Loss: 77.72
+---- Evaluating Model ----
+Epoch: 80, Precision: 0.73,  Recall: 0.67, mAP: 0.57, F1: 0.70
+---- AP class Car: 0.57
+Epoch 80 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 81 Loss: 77.99
+---- Evaluating Model ----
+Epoch: 81, Precision: 0.62,  Recall: 0.71, mAP: 0.50, F1: 0.66
+---- AP class Car: 0.5
+Epoch 81 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 82 Loss: 75.36
+---- Evaluating Model ----
+Epoch: 82, Precision: 0.73,  Recall: 0.68, mAP: 0.58, F1: 0.70
+---- AP class Car: 0.58
+Epoch 82 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000041.png
+Epoch 83 Loss: 74.78
+---- Evaluating Model ----
+Epoch: 83, Precision: 0.63,  Recall: 0.69, mAP: 0.57, F1: 0.66
+---- AP class Car: 0.57
+Epoch 83 finished! Saving model at ssd.pth
+
+
+
+Epoch 84 Loss: 78.10
+---- Evaluating Model ----
+Epoch: 84, Precision: 0.70,  Recall: 0.69, mAP: 0.53, F1: 0.70
+---- AP class Car: 0.53
+Epoch 84 finished! Saving model at ssd.pth
+
+
+
+Epoch 85 Loss: 77.18
+---- Evaluating Model ----
+Epoch: 85, Precision: 0.69,  Recall: 0.68, mAP: 0.55, F1: 0.68
+---- AP class Car: 0.55
+Epoch 85 finished! Saving model at ssd.pth
+
+
+
+Epoch 86 Loss: 76.28
+---- Evaluating Model ----
+Epoch: 86, Precision: 0.67,  Recall: 0.71, mAP: 0.57, F1: 0.69
+---- AP class Car: 0.57
+Epoch 86 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000132.png
+Epoch 87 Loss: 73.90
+---- Evaluating Model ----
+Epoch: 87, Precision: 0.68,  Recall: 0.70, mAP: 0.55, F1: 0.69
+---- AP class Car: 0.55
+Epoch 87 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 88 Loss: 73.02
+---- Evaluating Model ----
+Epoch: 88, Precision: 0.71,  Recall: 0.69, mAP: 0.60, F1: 0.70
+---- AP class Car: 0.6
+Epoch 88 finished! Saving model at ssd.pth
+
+
+
+Epoch 89 Loss: 74.52
+---- Evaluating Model ----
+Epoch: 89, Precision: 0.72,  Recall: 0.67, mAP: 0.56, F1: 0.69
+---- AP class Car: 0.56
+Epoch 89 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 90 Loss: 71.88
+---- Evaluating Model ----
+Epoch: 90, Precision: 0.70,  Recall: 0.66, mAP: 0.53, F1: 0.68
+---- AP class Car: 0.53
+Epoch 90 finished! Saving model at ssd.pth
+
+
+
+Epoch 91 Loss: 75.99
+---- Evaluating Model ----
+Epoch: 91, Precision: 0.69,  Recall: 0.67, mAP: 0.53, F1: 0.68
+---- AP class Car: 0.53
+Epoch 91 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 92 Loss: 68.66
+---- Evaluating Model ----
+Epoch: 92, Precision: 0.73,  Recall: 0.73, mAP: 0.61, F1: 0.73
+---- AP class Car: 0.61
+Epoch 92 finished! Saving model at ssd.pth
+
+
+
+Epoch 93 Loss: 75.65
+---- Evaluating Model ----
+Epoch: 93, Precision: 0.70,  Recall: 0.73, mAP: 0.57, F1: 0.72
+---- AP class Car: 0.57
+Epoch 93 finished! Saving model at ssd.pth
+
+
+
+Epoch 94 Loss: 74.49
+---- Evaluating Model ----
+Epoch: 94, Precision: 0.76,  Recall: 0.66, mAP: 0.54, F1: 0.71
+---- AP class Car: 0.54
+Epoch 94 finished! Saving model at ssd.pth
+
+
+
+Epoch 95 Loss: 69.44
+---- Evaluating Model ----
+Epoch: 95, Precision: 0.76,  Recall: 0.65, mAP: 0.54, F1: 0.70
+---- AP class Car: 0.54
+Epoch 95 finished! Saving model at ssd.pth
+
+
+
+Epoch 96 Loss: 70.35
+---- Evaluating Model ----
+Epoch: 96, Precision: 0.65,  Recall: 0.71, mAP: 0.55, F1: 0.68
+---- AP class Car: 0.55
+Epoch 96 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 97 Loss: 63.70
+---- Evaluating Model ----
+Epoch: 97, Precision: 0.71,  Recall: 0.72, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 97 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 98 Loss: 67.63
+---- Evaluating Model ----
+Epoch: 98, Precision: 0.71,  Recall: 0.70, mAP: 0.54, F1: 0.70
+---- AP class Car: 0.54
+Epoch 98 finished! Saving model at ssd.pth
+
+
+
+Epoch 99 Loss: 66.10
+---- Evaluating Model ----
+Epoch: 99, Precision: 0.70,  Recall: 0.74, mAP: 0.59, F1: 0.72
+---- AP class Car: 0.59
+Epoch 99 finished! Saving model at ssd.pth
+
+
+
+epochs: 100
+batch_size: 4
+gradient_accumulations: 2
+model_def: config/ssd-kitti.cfg
+data_config: config/kitti_1cls.data
+n_cpu: 1
+img_size: 300
+evaluation_interval: 1
+compute_map: False
+multiscale_training: False
+verbose: False
+use_gpu: True
+Loading saved model....
+Epoch 0 Loss: 71.21
+---- Evaluating Model ----
+Epoch: 0, Precision: 0.72,  Recall: 0.71, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 0 finished! Saving model at ssd.pth
+
+
+
+Epoch 1 Loss: 68.07
+---- Evaluating Model ----
+Epoch: 1, Precision: 0.80,  Recall: 0.72, mAP: 0.61, F1: 0.76
+---- AP class Car: 0.61
+Epoch 1 finished! Saving model at ssd.pth
+
+
+
+Epoch 2 Loss: 69.52
+---- Evaluating Model ----
+Epoch: 2, Precision: 0.71,  Recall: 0.66, mAP: 0.57, F1: 0.68
+---- AP class Car: 0.57
+Epoch 2 finished! Saving model at ssd.pth
+
+
+
+Epoch 3 Loss: 68.86
+---- Evaluating Model ----
+Epoch: 3, Precision: 0.71,  Recall: 0.71, mAP: 0.61, F1: 0.71
+---- AP class Car: 0.61
+Epoch 3 finished! Saving model at ssd.pth
+
+
+
+Epoch 4 Loss: 70.26
+---- Evaluating Model ----
+Epoch: 4, Precision: 0.70,  Recall: 0.77, mAP: 0.62, F1: 0.73
+---- AP class Car: 0.62
+Epoch 4 finished! Saving model at ssd.pth
+
+
+
+Epoch 5 Loss: 70.56
+---- Evaluating Model ----
+Epoch: 5, Precision: 0.78,  Recall: 0.71, mAP: 0.61, F1: 0.74
+---- AP class Car: 0.61
+Epoch 5 finished! Saving model at ssd.pth
+
+
+
+Epoch 6 Loss: 73.55
+---- Evaluating Model ----
+Epoch: 6, Precision: 0.71,  Recall: 0.72, mAP: 0.59, F1: 0.71
+---- AP class Car: 0.59
+Epoch 6 finished! Saving model at ssd.pth
+
+
+
+Epoch 7 Loss: 70.75
+---- Evaluating Model ----
+Epoch: 7, Precision: 0.71,  Recall: 0.71, mAP: 0.60, F1: 0.71
+---- AP class Car: 0.6
+Epoch 7 finished! Saving model at ssd.pth
+
+
+
+Epoch 8 Loss: 65.18
+---- Evaluating Model ----
+Epoch: 8, Precision: 0.71,  Recall: 0.69, mAP: 0.55, F1: 0.70
+---- AP class Car: 0.55
+Epoch 8 finished! Saving model at ssd.pth
+
+
+
+Epoch 9 Loss: 66.26
+---- Evaluating Model ----
+Epoch: 9, Precision: 0.69,  Recall: 0.71, mAP: 0.53, F1: 0.70
+---- AP class Car: 0.53
+Epoch 9 finished! Saving model at ssd.pth
+
+
+
+Epoch 10 Loss: 64.36
+---- Evaluating Model ----
+Epoch: 10, Precision: 0.68,  Recall: 0.72, mAP: 0.58, F1: 0.70
+---- AP class Car: 0.58
+Epoch 10 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 11 Loss: 66.06
+---- Evaluating Model ----
+Epoch: 11, Precision: 0.69,  Recall: 0.68, mAP: 0.53, F1: 0.68
+---- AP class Car: 0.53
+Epoch 11 finished! Saving model at ssd.pth
+
+
+
+Epoch 12 Loss: 62.36
+---- Evaluating Model ----
+Epoch: 12, Precision: 0.67,  Recall: 0.71, mAP: 0.57, F1: 0.69
+---- AP class Car: 0.57
+Epoch 12 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000132.png
+Epoch 13 Loss: 61.10
+---- Evaluating Model ----
+Epoch: 13, Precision: 0.72,  Recall: 0.69, mAP: 0.58, F1: 0.70
+---- AP class Car: 0.58
+Epoch 13 finished! Saving model at ssd.pth
+
+
+
+Epoch 14 Loss: 74.54
+---- Evaluating Model ----
+Epoch: 14, Precision: 0.70,  Recall: 0.68, mAP: 0.57, F1: 0.69
+---- AP class Car: 0.57
+Epoch 14 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000084.png
+Epoch 15 Loss: 61.49
+---- Evaluating Model ----
+Epoch: 15, Precision: 0.70,  Recall: 0.72, mAP: 0.55, F1: 0.71
+---- AP class Car: 0.55
+Epoch 15 finished! Saving model at ssd.pth
+
+
+
+Epoch 16 Loss: 57.63
+---- Evaluating Model ----
+Epoch: 16, Precision: 0.69,  Recall: 0.73, mAP: 0.61, F1: 0.71
+---- AP class Car: 0.61
+Epoch 16 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000132.png
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 17 Loss: 59.21
+---- Evaluating Model ----
+Epoch: 17, Precision: 0.72,  Recall: 0.73, mAP: 0.57, F1: 0.72
+---- AP class Car: 0.57
+Epoch 17 finished! Saving model at ssd.pth
+
+
+
+Epoch 18 Loss: 65.18
+---- Evaluating Model ----
+Epoch: 18, Precision: 0.78,  Recall: 0.63, mAP: 0.52, F1: 0.70
+---- AP class Car: 0.52
+Epoch 18 finished! Saving model at ssd.pth
+
+
+
+Epoch 19 Loss: 65.90
+---- Evaluating Model ----
+Epoch: 19, Precision: 0.71,  Recall: 0.71, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 19 finished! Saving model at ssd.pth
+
+
+
+Epoch 20 Loss: 63.33
+---- Evaluating Model ----
+Epoch: 20, Precision: 0.69,  Recall: 0.73, mAP: 0.61, F1: 0.71
+---- AP class Car: 0.61
+Epoch 20 finished! Saving model at ssd.pth
+
+
+
+Epoch 21 Loss: 62.52
+---- Evaluating Model ----
+Epoch: 21, Precision: 0.69,  Recall: 0.73, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 21 finished! Saving model at ssd.pth
+
+
+
+Epoch 22 Loss: 60.71
+---- Evaluating Model ----
+Epoch: 22, Precision: 0.72,  Recall: 0.73, mAP: 0.59, F1: 0.72
+---- AP class Car: 0.59
+Epoch 22 finished! Saving model at ssd.pth
+
+
+
+Epoch 23 Loss: 59.81
+---- Evaluating Model ----
+Epoch: 23, Precision: 0.69,  Recall: 0.70, mAP: 0.59, F1: 0.70
+---- AP class Car: 0.59
+Epoch 23 finished! Saving model at ssd.pth
+
+
+
+Epoch 24 Loss: 58.78
+---- Evaluating Model ----
+Epoch: 24, Precision: 0.71,  Recall: 0.74, mAP: 0.63, F1: 0.73
+---- AP class Car: 0.63
+Epoch 24 finished! Saving model at ssd.pth
+
+
+
+Epoch 25 Loss: 58.84
+---- Evaluating Model ----
+Epoch: 25, Precision: 0.70,  Recall: 0.76, mAP: 0.64, F1: 0.73
+---- AP class Car: 0.64
+Epoch 25 finished! Saving model at ssd.pth
+
+
+
+Epoch 26 Loss: 58.59
+---- Evaluating Model ----
+Epoch: 26, Precision: 0.72,  Recall: 0.75, mAP: 0.64, F1: 0.74
+---- AP class Car: 0.64
+Epoch 26 finished! Saving model at ssd.pth
+
+
+
+Epoch 27 Loss: 63.33
+---- Evaluating Model ----
+Epoch: 27, Precision: 0.66,  Recall: 0.72, mAP: 0.57, F1: 0.69
+---- AP class Car: 0.57
+Epoch 27 finished! Saving model at ssd.pth
+
+
+
+Epoch 28 Loss: 60.97
+---- Evaluating Model ----
+Epoch: 28, Precision: 0.69,  Recall: 0.71, mAP: 0.60, F1: 0.70
+---- AP class Car: 0.6
+Epoch 28 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000132.png
+Epoch 29 Loss: 55.79
+---- Evaluating Model ----
+Epoch: 29, Precision: 0.72,  Recall: 0.75, mAP: 0.63, F1: 0.74
+---- AP class Car: 0.63
+Epoch 29 finished! Saving model at ssd.pth
+
+
+
+Epoch 30 Loss: 57.77
+---- Evaluating Model ----
+Epoch: 30, Precision: 0.73,  Recall: 0.74, mAP: 0.63, F1: 0.73
+---- AP class Car: 0.63
+Epoch 30 finished! Saving model at ssd.pth
+
+
+
+Epoch 31 Loss: 60.94
+---- Evaluating Model ----
+Epoch: 31, Precision: 0.73,  Recall: 0.73, mAP: 0.61, F1: 0.73
+---- AP class Car: 0.61
+Epoch 31 finished! Saving model at ssd.pth
+
+
+
+Epoch 32 Loss: 60.13
+---- Evaluating Model ----
+Epoch: 32, Precision: 0.76,  Recall: 0.70, mAP: 0.59, F1: 0.73
+---- AP class Car: 0.59
+Epoch 32 finished! Saving model at ssd.pth
+
+
+
+Epoch 33 Loss: 62.20
+---- Evaluating Model ----
+Epoch: 33, Precision: 0.67,  Recall: 0.67, mAP: 0.53, F1: 0.67
+---- AP class Car: 0.53
+Epoch 33 finished! Saving model at ssd.pth
+
+
+
+Epoch 34 Loss: 58.12
+---- Evaluating Model ----
+Epoch: 34, Precision: 0.68,  Recall: 0.72, mAP: 0.55, F1: 0.70
+---- AP class Car: 0.55
+Epoch 34 finished! Saving model at ssd.pth
+
+
+
+Epoch 35 Loss: 58.56
+---- Evaluating Model ----
+Epoch: 35, Precision: 0.75,  Recall: 0.66, mAP: 0.52, F1: 0.70
+---- AP class Car: 0.52
+Epoch 35 finished! Saving model at ssd.pth
+
+
+
+Epoch 36 Loss: 55.23
+---- Evaluating Model ----
+Epoch: 36, Precision: 0.72,  Recall: 0.70, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 36 finished! Saving model at ssd.pth
+
+
+
+ check 2 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000132.png
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 37 Loss: 55.50
+---- Evaluating Model ----
+Epoch: 37, Precision: 0.70,  Recall: 0.72, mAP: 0.57, F1: 0.71
+---- AP class Car: 0.57
+Epoch 37 finished! Saving model at ssd.pth
+
+
+
+Epoch 38 Loss: 55.07
+---- Evaluating Model ----
+Epoch: 38, Precision: 0.74,  Recall: 0.69, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 38 finished! Saving model at ssd.pth
+
+
+
+Epoch 39 Loss: 57.07
+---- Evaluating Model ----
+Epoch: 39, Precision: 0.70,  Recall: 0.67, mAP: 0.55, F1: 0.69
+---- AP class Car: 0.55
+Epoch 39 finished! Saving model at ssd.pth
+
+
+
+Epoch 40 Loss: 56.39
+---- Evaluating Model ----
+Epoch: 40, Precision: 0.70,  Recall: 0.63, mAP: 0.54, F1: 0.67
+---- AP class Car: 0.54
+Epoch 40 finished! Saving model at ssd.pth
+
+
+
+Epoch 41 Loss: 53.26
+---- Evaluating Model ----
+Epoch: 41, Precision: 0.70,  Recall: 0.67, mAP: 0.58, F1: 0.68
+---- AP class Car: 0.58
+Epoch 41 finished! Saving model at ssd.pth
+
+
+
+Epoch 42 Loss: 54.00
+---- Evaluating Model ----
+Epoch: 42, Precision: 0.76,  Recall: 0.68, mAP: 0.60, F1: 0.72
+---- AP class Car: 0.6
+Epoch 42 finished! Saving model at ssd.pth
+
+
+
+Epoch 43 Loss: 56.35
+---- Evaluating Model ----
+Epoch: 43, Precision: 0.66,  Recall: 0.69, mAP: 0.55, F1: 0.67
+---- AP class Car: 0.55
+Epoch 43 finished! Saving model at ssd.pth
+
+
+
+Epoch 44 Loss: 55.19
+---- Evaluating Model ----
+Epoch: 44, Precision: 0.68,  Recall: 0.68, mAP: 0.53, F1: 0.68
+---- AP class Car: 0.53
+Epoch 44 finished! Saving model at ssd.pth
+
+
+
+Epoch 45 Loss: 53.53
+---- Evaluating Model ----
+Epoch: 45, Precision: 0.70,  Recall: 0.69, mAP: 0.59, F1: 0.69
+---- AP class Car: 0.59
+Epoch 45 finished! Saving model at ssd.pth
+
+
+
+Epoch 46 Loss: 55.71
+---- Evaluating Model ----
+Epoch: 46, Precision: 0.69,  Recall: 0.73, mAP: 0.61, F1: 0.71
+---- AP class Car: 0.61
+Epoch 46 finished! Saving model at ssd.pth
+
+
+
+Epoch 47 Loss: 53.46
+---- Evaluating Model ----
+Epoch: 47, Precision: 0.68,  Recall: 0.70, mAP: 0.54, F1: 0.69
+---- AP class Car: 0.54
+Epoch 47 finished! Saving model at ssd.pth
+
+
+
+Epoch 48 Loss: 55.54
+---- Evaluating Model ----
+Epoch: 48, Precision: 0.69,  Recall: 0.72, mAP: 0.61, F1: 0.71
+---- AP class Car: 0.61
+Epoch 48 finished! Saving model at ssd.pth
+
+
+
+Epoch 49 Loss: 54.07
+---- Evaluating Model ----
+Epoch: 49, Precision: 0.69,  Recall: 0.66, mAP: 0.57, F1: 0.67
+---- AP class Car: 0.57
+Epoch 49 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 50 Loss: 52.11
+---- Evaluating Model ----
+Epoch: 50, Precision: 0.68,  Recall: 0.72, mAP: 0.61, F1: 0.70
+---- AP class Car: 0.61
+Epoch 50 finished! Saving model at ssd.pth
+
+
+
+Epoch 51 Loss: 52.56
+---- Evaluating Model ----
+Epoch: 51, Precision: 0.76,  Recall: 0.73, mAP: 0.66, F1: 0.74
+---- AP class Car: 0.66
+Epoch 51 finished! Saving model at ssd.pth
+
+
+
+Epoch 52 Loss: 54.31
+---- Evaluating Model ----
+Epoch: 52, Precision: 0.68,  Recall: 0.68, mAP: 0.54, F1: 0.68
+---- AP class Car: 0.54
+Epoch 52 finished! Saving model at ssd.pth
+
+
+
+Epoch 53 Loss: 54.61
+---- Evaluating Model ----
+Epoch: 53, Precision: 0.72,  Recall: 0.71, mAP: 0.60, F1: 0.71
+---- AP class Car: 0.6
+Epoch 53 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 54 Loss: 51.79
+---- Evaluating Model ----
+Epoch: 54, Precision: 0.75,  Recall: 0.67, mAP: 0.58, F1: 0.70
+---- AP class Car: 0.58
+Epoch 54 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 55 Loss: 47.99
+---- Evaluating Model ----
+Epoch: 55, Precision: 0.70,  Recall: 0.71, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 55 finished! Saving model at ssd.pth
+
+
+
+Epoch 56 Loss: 50.75
+---- Evaluating Model ----
+Epoch: 56, Precision: 0.71,  Recall: 0.70, mAP: 0.59, F1: 0.70
+---- AP class Car: 0.59
+Epoch 56 finished! Saving model at ssd.pth
+
+
+
+Epoch 57 Loss: 51.64
+---- Evaluating Model ----
+Epoch: 57, Precision: 0.76,  Recall: 0.70, mAP: 0.61, F1: 0.73
+---- AP class Car: 0.61
+Epoch 57 finished! Saving model at ssd.pth
+
+
+
+Epoch 58 Loss: 54.27
+---- Evaluating Model ----
+Epoch: 58, Precision: 0.69,  Recall: 0.71, mAP: 0.61, F1: 0.70
+---- AP class Car: 0.61
+Epoch 58 finished! Saving model at ssd.pth
+
+
+
+Epoch 59 Loss: 54.36
+---- Evaluating Model ----
+Epoch: 59, Precision: 0.71,  Recall: 0.66, mAP: 0.56, F1: 0.68
+---- AP class Car: 0.56
+Epoch 59 finished! Saving model at ssd.pth
+
+
+
+Epoch 60 Loss: 56.33
+---- Evaluating Model ----
+Epoch: 60, Precision: 0.69,  Recall: 0.71, mAP: 0.60, F1: 0.70
+---- AP class Car: 0.6
+Epoch 60 finished! Saving model at ssd.pth
+
+
+
+Epoch 61 Loss: 50.02
+---- Evaluating Model ----
+Epoch: 61, Precision: 0.70,  Recall: 0.66, mAP: 0.54, F1: 0.68
+---- AP class Car: 0.54
+Epoch 61 finished! Saving model at ssd.pth
+
+
+
+Epoch 62 Loss: 52.13
+---- Evaluating Model ----
+Epoch: 62, Precision: 0.73,  Recall: 0.68, mAP: 0.62, F1: 0.70
+---- AP class Car: 0.62
+Epoch 62 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 63 Loss: 51.54
+---- Evaluating Model ----
+Epoch: 63, Precision: 0.72,  Recall: 0.73, mAP: 0.63, F1: 0.73
+---- AP class Car: 0.63
+Epoch 63 finished! Saving model at ssd.pth
+
+
+
+Epoch 64 Loss: 47.52
+---- Evaluating Model ----
+Epoch: 64, Precision: 0.69,  Recall: 0.71, mAP: 0.60, F1: 0.70
+---- AP class Car: 0.6
+Epoch 64 finished! Saving model at ssd.pth
+
+
+
+Epoch 65 Loss: 48.21
+---- Evaluating Model ----
+Epoch: 65, Precision: 0.71,  Recall: 0.71, mAP: 0.63, F1: 0.71
+---- AP class Car: 0.63
+Epoch 65 finished! Saving model at ssd.pth
+
+
+
+Epoch 66 Loss: 50.60
+---- Evaluating Model ----
+Epoch: 66, Precision: 0.74,  Recall: 0.67, mAP: 0.53, F1: 0.70
+---- AP class Car: 0.53
+Epoch 66 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 67 Loss: 47.52
+---- Evaluating Model ----
+Epoch: 67, Precision: 0.70,  Recall: 0.73, mAP: 0.58, F1: 0.72
+---- AP class Car: 0.58
+Epoch 67 finished! Saving model at ssd.pth
+
+
+
+Epoch 68 Loss: 53.69
+---- Evaluating Model ----
+Epoch: 68, Precision: 0.79,  Recall: 0.70, mAP: 0.60, F1: 0.74
+---- AP class Car: 0.6
+Epoch 68 finished! Saving model at ssd.pth
+
+
+
+Epoch 69 Loss: 48.68
+---- Evaluating Model ----
+Epoch: 69, Precision: 0.70,  Recall: 0.71, mAP: 0.60, F1: 0.71
+---- AP class Car: 0.6
+Epoch 69 finished! Saving model at ssd.pth
+
+
+
+Epoch 70 Loss: 49.57
+---- Evaluating Model ----
+Epoch: 70, Precision: 0.69,  Recall: 0.70, mAP: 0.58, F1: 0.70
+---- AP class Car: 0.58
+Epoch 70 finished! Saving model at ssd.pth
+
+
+
+Epoch 71 Loss: 50.00
+---- Evaluating Model ----
+Epoch: 71, Precision: 0.73,  Recall: 0.71, mAP: 0.58, F1: 0.72
+---- AP class Car: 0.58
+Epoch 71 finished! Saving model at ssd.pth
+
+
+
+ check 1 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 72 Loss: 50.68
+---- Evaluating Model ----
+Epoch: 72, Precision: 0.74,  Recall: 0.70, mAP: 0.61, F1: 0.72
+---- AP class Car: 0.61
+Epoch 72 finished! Saving model at ssd.pth
+
+
+
+Epoch 73 Loss: 48.86
+---- Evaluating Model ----
+Epoch: 73, Precision: 0.70,  Recall: 0.74, mAP: 0.61, F1: 0.72
+---- AP class Car: 0.61
+Epoch 73 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 74 Loss: 47.98
+---- Evaluating Model ----
+Epoch: 74, Precision: 0.72,  Recall: 0.62, mAP: 0.52, F1: 0.67
+---- AP class Car: 0.52
+Epoch 74 finished! Saving model at ssd.pth
+
+
+
+Epoch 75 Loss: 49.20
+---- Evaluating Model ----
+Epoch: 75, Precision: 0.76,  Recall: 0.72, mAP: 0.61, F1: 0.74
+---- AP class Car: 0.61
+Epoch 75 finished! Saving model at ssd.pth
+
+
+
+Epoch 76 Loss: 49.52
+---- Evaluating Model ----
+Epoch: 76, Precision: 0.74,  Recall: 0.73, mAP: 0.63, F1: 0.74
+---- AP class Car: 0.63
+Epoch 76 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 77 Loss: 47.20
+---- Evaluating Model ----
+Epoch: 77, Precision: 0.70,  Recall: 0.77, mAP: 0.64, F1: 0.73
+---- AP class Car: 0.64
+Epoch 77 finished! Saving model at ssd.pth
+
+
+
+Epoch 78 Loss: 48.95
+---- Evaluating Model ----
+Epoch: 78, Precision: 0.72,  Recall: 0.76, mAP: 0.65, F1: 0.74
+---- AP class Car: 0.65
+Epoch 78 finished! Saving model at ssd.pth
+
+
+
+Epoch 79 Loss: 47.75
+---- Evaluating Model ----
+Epoch: 79, Precision: 0.66,  Recall: 0.74, mAP: 0.55, F1: 0.70
+---- AP class Car: 0.55
+Epoch 79 finished! Saving model at ssd.pth
+
+
+
+Epoch 80 Loss: 48.88
+---- Evaluating Model ----
+Epoch: 80, Precision: 0.73,  Recall: 0.74, mAP: 0.62, F1: 0.73
+---- AP class Car: 0.62
+Epoch 80 finished! Saving model at ssd.pth
+
+
+
+Epoch 81 Loss: 49.19
+---- Evaluating Model ----
+Epoch: 81, Precision: 0.73,  Recall: 0.70, mAP: 0.58, F1: 0.71
+---- AP class Car: 0.58
+Epoch 81 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 82 Loss: 47.06
+---- Evaluating Model ----
+Epoch: 82, Precision: 0.71,  Recall: 0.75, mAP: 0.61, F1: 0.73
+---- AP class Car: 0.61
+Epoch 82 finished! Saving model at ssd.pth
+
+
+
+Epoch 83 Loss: 44.75
+---- Evaluating Model ----
+Epoch: 83, Precision: 0.69,  Recall: 0.72, mAP: 0.60, F1: 0.71
+---- AP class Car: 0.6
+Epoch 83 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000084.png
+Epoch 84 Loss: 43.64
+---- Evaluating Model ----
+Epoch: 84, Precision: 0.72,  Recall: 0.73, mAP: 0.62, F1: 0.73
+---- AP class Car: 0.62
+Epoch 84 finished! Saving model at ssd.pth
+
+
+
+Epoch 85 Loss: 47.85
+---- Evaluating Model ----
+Epoch: 85, Precision: 0.72,  Recall: 0.77, mAP: 0.66, F1: 0.75
+---- AP class Car: 0.66
+Epoch 85 finished! Saving model at ssd.pth
+
+
+
+Epoch 86 Loss: 48.39
+---- Evaluating Model ----
+Epoch: 86, Precision: 0.71,  Recall: 0.66, mAP: 0.54, F1: 0.68
+---- AP class Car: 0.54
+Epoch 86 finished! Saving model at ssd.pth
+
+
+
+Epoch 87 Loss: 48.36
+---- Evaluating Model ----
+Epoch: 87, Precision: 0.72,  Recall: 0.74, mAP: 0.63, F1: 0.73
+---- AP class Car: 0.63
+Epoch 87 finished! Saving model at ssd.pth
+
+
+
+Epoch 88 Loss: 43.71
+---- Evaluating Model ----
+Epoch: 88, Precision: 0.75,  Recall: 0.71, mAP: 0.62, F1: 0.73
+---- AP class Car: 0.62
+Epoch 88 finished! Saving model at ssd.pth
+
+
+
+Epoch 89 Loss: 47.25
+---- Evaluating Model ----
+Epoch: 89, Precision: 0.74,  Recall: 0.69, mAP: 0.57, F1: 0.72
+---- AP class Car: 0.57
+Epoch 89 finished! Saving model at ssd.pth
+
+
+
+Epoch 90 Loss: 49.75
+---- Evaluating Model ----
+Epoch: 90, Precision: 0.72,  Recall: 0.68, mAP: 0.55, F1: 0.70
+---- AP class Car: 0.55
+Epoch 90 finished! Saving model at ssd.pth
+
+
+
+Epoch 91 Loss: 44.15
+---- Evaluating Model ----
+Epoch: 91, Precision: 0.75,  Recall: 0.73, mAP: 0.60, F1: 0.74
+---- AP class Car: 0.6
+Epoch 91 finished! Saving model at ssd.pth
+
+
+
+Epoch 92 Loss: 46.73
+---- Evaluating Model ----
+Epoch: 92, Precision: 0.68,  Recall: 0.69, mAP: 0.55, F1: 0.68
+---- AP class Car: 0.55
+Epoch 92 finished! Saving model at ssd.pth
+
+
+
+Epoch 93 Loss: 44.79
+---- Evaluating Model ----
+Epoch: 93, Precision: 0.74,  Recall: 0.69, mAP: 0.59, F1: 0.71
+---- AP class Car: 0.59
+Epoch 93 finished! Saving model at ssd.pth
+
+
+
+Epoch 94 Loss: 46.47
+---- Evaluating Model ----
+Epoch: 94, Precision: 0.73,  Recall: 0.74, mAP: 0.62, F1: 0.74
+---- AP class Car: 0.62
+Epoch 94 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 95 Loss: 48.16
+---- Evaluating Model ----
+Epoch: 95, Precision: 0.71,  Recall: 0.73, mAP: 0.59, F1: 0.72
+---- AP class Car: 0.59
+Epoch 95 finished! Saving model at ssd.pth
+
+
+
+ check 3 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000117.png
+Epoch 96 Loss: 48.57
+---- Evaluating Model ----
+Epoch: 96, Precision: 0.74,  Recall: 0.69, mAP: 0.60, F1: 0.71
+---- AP class Car: 0.6
+Epoch 96 finished! Saving model at ssd.pth
+
+
+
+Epoch 97 Loss: 47.18
+---- Evaluating Model ----
+Epoch: 97, Precision: 0.69,  Recall: 0.76, mAP: 0.62, F1: 0.72
+---- AP class Car: 0.62
+Epoch 97 finished! Saving model at ssd.pth
+
+
+
+ check 0 : /home/kartik/Desktop/ADS/Softwareentwick 950733395 (S24)_2024072_1714/04 - Detection (14.05)/YOLOV3_SSD/kitti/images/train/000170.png
+Epoch 98 Loss: 44.27
+---- Evaluating Model ----
+Epoch: 98, Precision: 0.75,  Recall: 0.68, mAP: 0.57, F1: 0.71
+---- AP class Car: 0.57
+Epoch 98 finished! Saving model at ssd.pth
+
+
+
+Epoch 99 Loss: 43.91
+---- Evaluating Model ----
+Epoch: 99, Precision: 0.73,  Recall: 0.74, mAP: 0.59, F1: 0.73
+---- AP class Car: 0.59
+Epoch 99 finished! Saving model at ssd.pth
+
+
+

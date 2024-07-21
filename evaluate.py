@@ -59,10 +59,13 @@ def evaluate(model, path, iou_thres, conf_thres, nms_thres, img_size, batch_size
             elif model_type == 'ssd':
                 outputs_ = model(imgs, 'eval')
                 outputs_[..., 1:] = outputs_[..., 1:] * img_size #(batch_size, num_classes, topk, 5(conf score + 4(cx,cy,w,h)))
-                outputs = torch.cat([outputs_[:,1,:,1:], outputs_[:,1,:,:1], \
+                outputs_ = torch.cat([outputs_[:,1,:,1:], outputs_[:,1,:,:1], \
                                      torch.zeros_like(outputs_[:,0,:,:1])]\
                                         , dim=-1) # -> (batch_size, topk, 6 (4(cx,cy,w,h) + 1(conf_score) + 1(label) ))
-
+                outputs = []
+                for img_idx in range(outputs_.shape[0]):
+                    conf_idxs = torch.nonzero(outputs_[img_idx, :,4] > conf_thres).squeeze(-1)
+                    outputs.append(outputs_[img_idx,conf_idxs,:])
         sample_metrics += get_batch_statistics(outputs, targets, iou_threshold=iou_thres)
     
     if len(sample_metrics) == 0:  # no detections over whole validation set.
