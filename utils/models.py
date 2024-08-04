@@ -653,7 +653,7 @@ class SSD(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
         self.detect = Detect(self.num_classes, 0, 100, 0.5, 0.5, variances=self.variances)
 
-    def forward(self, x, mode='train'):
+    def forward(self, x, mode='eval'):
         """Applies network layers and ops on input image(s) x.
 
         Args:
@@ -661,7 +661,7 @@ class SSD(nn.Module):
 
         Return:
             Depending on mode:
-            test:
+            test/eval:
                 Variable(tensor) of output class label predictions,
                 confidence score, and corresponding location predictions for
                 each object detected. Shape: [batch,topk,7]
@@ -681,9 +681,7 @@ class SSD(nn.Module):
         # apply vgg up to conv4_3 relu
         for k in range(23):
             if k in vgg_skip_con_list:
-                try:
-                    x = self.vgg[k](x) + x
-                except: print(f'Problematic layer: {k} ')
+                x = self.vgg[k](x) + x
             else: 
                 x = self.vgg[k](x)
 
@@ -693,9 +691,7 @@ class SSD(nn.Module):
         # apply vgg up to fc7
         for k in range(23, len(self.vgg)):
             if k in vgg_skip_con_list:
-                try:
-                    x = self.vgg[k](x) + x
-                except: print(f'Problematic layer: {k} ')
+                x = self.vgg[k](x) + x
             else: 
                 x = self.vgg[k](x)
 

@@ -264,7 +264,7 @@ if __name__ == "__main__":
 
                 #print(f'Input Img batch shape: {img.shape}')
                 #print(f'Target Img batch shape: {targets.shape}')
-                predictions = model(img.to(device))
+                predictions = model(img.to(device), 'train')
                 targets = Variable(targets).to(device)
 
                 targets_ssd = [None] * img.shape[0]
