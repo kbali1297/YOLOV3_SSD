@@ -469,6 +469,8 @@ class Detect(nn.Module):
                 boxes = decoded_boxes[l_mask].view(-1, 4)
                 # idx of highest scoring and non-overlapping boxes per class
                 ids, count = nms(boxes, scores, self.nms_thresh, self.conf_thresh)
+                if count > output.shape[-1]:
+                    count = output.shape[-1]
                 output[i, cl, :count] = \
                     torch.cat((scores[ids[:count]].unsqueeze(1),
                                boxes[ids[:count]]), 1)
@@ -631,9 +633,15 @@ class SSD(nn.Module):
         extra_net_layers = ast.literal_eval(self.module_defs[1]["extras"])[str(size)] 
         mbox_net_layers = ast.literal_eval(self.module_defs[1]["mbox"])[str(size)] 
 
+        output_channel_extranet = base_net_layers[-1]
+        L2_in_layer = base_net_layers[14]
         base, extras, head = multibox(vgg(base_net_layers, 3),
-                                     add_extras(extra_net_layers, 1024),
+                                     add_extras(extra_net_layers, output_channel_extranet),
                                      mbox_net_layers, self.num_classes)
+        
+        # base, extras, head = multibox(vgg(base_net_layers, 3),
+        #                              add_extras(extra_net_layers, 605),
+        #                              mbox_net_layers, self.num_classes)
 
         self.priorbox = PriorBox(self.module_defs[0])
  
@@ -643,7 +651,8 @@ class SSD(nn.Module):
         # SSD network
         self.vgg = nn.ModuleList(base)
         # Layer learns to scale the l2 normalized features from conv4_3
-        self.L2Norm = L2Norm(512, 20)
+        self.L2Norm = L2Norm(L2_in_layer, 20)
+        #self.L2Norm = L2Norm(302,20)
         self.extras = nn.ModuleList(extras)
 
         self.loc = nn.ModuleList(head[0]) ## Loc layers
@@ -685,7 +694,9 @@ class SSD(nn.Module):
             else: 
                 x = self.vgg[k](x)
 
-        s = self.L2Norm(x)
+        #s = self.L2Norm(x)
+        ## Trying without the L2 norm layer
+        s=x
         sources.append(s)
 
         # apply vgg up to fc7
@@ -740,26 +751,53 @@ class SSD(nn.Module):
 
 # This function is derived from torchvision VGG make_layers()
 # https://github.com/pytorch/vision/blob/master/torchvision/models/vgg.py
+# def vgg(cfg, i, batch_norm=False):
+#     layers = []
+#     in_channels = i
+#     for v in cfg:
+#         if v == 'M':
+#             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
+#         elif v == 'C':
+#             layers += [nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True)]
+#         else:
+#             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
+#             if batch_norm:
+#                 layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
+#             else:
+#                 layers += [conv2d, nn.ReLU(inplace=True)]
+#             in_channels = v
+#     pool5 = nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
+#     conv6 = nn.Conv2d(512, 1024, kernel_size=3, padding=6, dilation=6)
+#     conv7 = nn.Conv2d(1024, 1024, kernel_size=1)
+#     layers += [pool5, conv6,
+#                nn.ReLU(inplace=True), conv7, nn.ReLU(inplace=True)]
+#     return layers
+
 def vgg(cfg, i, batch_norm=False):
     layers = []
     in_channels = i
-    for v in cfg:
+    for i, v in enumerate(cfg):
+        if i==len(cfg)-2:
+            layers += [nn.MaxPool2d(kernel_size=3, stride=1, padding=1)]
+            layers += [nn.Conv2d(in_channels, v, kernel_size=3, padding=6, dilation=6, bias=False)]
+            layers += [nn.ReLU(inplace=True)]
+            in_channels = v
+            continue
+        if i==len(cfg)-1:
+            layers += [nn.Conv2d(in_channels, v, kernel_size=1, bias=False)]
+            layers += [nn.ReLU(inplace=True)]
+            continue
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
         elif v == 'C':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True)]
         else:
-            conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
+            conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1, bias=False)
             if batch_norm:
                 layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
             else:
                 layers += [conv2d, nn.ReLU(inplace=True)]
             in_channels = v
-    pool5 = nn.MaxPool2d(kernel_size=3, stride=1, padding=1)
-    conv6 = nn.Conv2d(512, 1024, kernel_size=3, padding=6, dilation=6)
-    conv7 = nn.Conv2d(1024, 1024, kernel_size=1)
-    layers += [pool5, conv6,
-               nn.ReLU(inplace=True), conv7, nn.ReLU(inplace=True)]
     return layers
 
 
