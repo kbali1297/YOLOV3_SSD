@@ -235,8 +235,8 @@ def nms(boxes, scores, overlap=0.5, conf_thresh=0.4):
         yy1 = torch.clamp(yy1, min=y1[i])
         xx2 = torch.clamp(xx2, max=x2[i])
         yy2 = torch.clamp(yy2, max=y2[i])
-        w.resize_as_(xx2)
-        h.resize_as_(yy2)
+        #w.resize_as_(xx2)
+        #h.resize_as_(yy2)
         w = xx2 - xx1
         h = yy2 - yy1
         # check sizes of xx1 and xx2.. after each iteration

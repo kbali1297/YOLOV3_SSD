@@ -14,11 +14,25 @@ from utils.augmentations import *
 from utils.datasets import *
 from utils.parse_config import *
 from utils.utils import *
+from utils.prune import *
 
 import argparse
 
 parser = argparse.ArgumentParser(description='CmdLine Parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument(  '--model', default='SSD', type=str)
+parser.add_argument(  '--prune_amount', default=0.0, type=float)
+parser.add_argument(  '--num_prune', default=0, type=int)
+parser.add_argument(  '--epochs', default=20, type=int)
+parser.add_argument(  '--batch_size', default=4, type=int)
+parser.add_argument(  '--gradient_accumulations', default=2, type=int)
+parser.add_argument(  '--data_config', default='config/kitti_1cls.data', type=str)
+parser.add_argument(  '--n_cpu', default=1, type=int)
+parser.add_argument(  '--img_size', default=300, type=int)
+parser.add_argument(  '--evaluation_interval', default=1, type=int)
+parser.add_argument(  '--compute_map', default=False, type=bool)
+parser.add_argument(  '--multiscale_training', default=False, type=bool)
+parser.add_argument(  '--verbose', default=False, type=bool)
+parser.add_argument(  '--use_gpu', default=True, type=bool)
 
 pargs = parser.parse_args()
 params = {}
@@ -26,34 +40,25 @@ params.update(vars(pargs))
 
 
 if __name__ == "__main__":
-    opt = dict()
-    opt["epochs"] = 100
-    opt["batch_size"] = 4
-    opt["gradient_accumulations"] = 2
 
     if params['model'] == 'SSD': 
-        opt["model_def"] = "config/ssd-kitti.cfg"
+        model_def = "config/ssd-kitti.cfg"
     elif params["model"] == 'YOLO':
-        opt["model_def"] = "config/yolov3-kitti-tiny_1cls.cfg"
-    
-    opt["data_config"] = "config/kitti_1cls.data"
-    opt["n_cpu"] = 1
-    opt["img_size"] = 300
-    opt["evaluation_interval"] = 1
-    opt["compute_map"] = False
-    opt["multiscale_training"] = False
-    opt["verbose"] = False
-    opt["use_gpu"] = True
+        model_def = "config/yolov3-kitti-tiny_1cls.cfg"
 
-    for key in opt:
-        print(f"{key}: {opt[key]}")
+    do_prune = False
+    if params['num_prune'] > 0: do_prune = True
+    
+
+    for key in params:
+        print(f"{key}: {params[key]}")
 
     # Check if GPU is available
     #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device = 'cuda:0' if opt["use_gpu"] else 'cpu'
+    device = 'cuda:0' if params["use_gpu"] else 'cpu'
 
     # Get data configuration
-    data_config = parse_data_config(opt["data_config"])
+    data_config = parse_data_config(params["data_config"])
     train_path = data_config["train"]
     valid_path = data_config["test"]
     try:
@@ -94,22 +99,22 @@ if __name__ == "__main__":
         sys.exit()
 
     # Get dataloader
-    dataset = ListDataset(train_path, multiscale=opt["multiscale_training"], img_size=opt["img_size"],
+    dataset = ListDataset(train_path, multiscale=params["multiscale_training"], img_size=params["img_size"],
                             transform=AUGMENTATION_TRANSFORMS, num_classes=num_classes)
     dataloader = torch.utils.data.DataLoader(
             dataset,
-            batch_size=opt["batch_size"],
+            batch_size=params["batch_size"],
             shuffle=True,
-            num_workers=opt["n_cpu"],
+            num_workers=params["n_cpu"],
             pin_memory=True,
             collate_fn=dataset.collate_fn,
         )
 
-    model_type = opt["model_def"].split('/')[1].split('-')[0]
+    model_type = model_def.split('/')[1].split('-')[0]
     
     if model_type == 'yolov3':
         # Initiate model
-        model = Darknet(opt["model_def"], img_size=opt["img_size"]).to(device)
+        model = Darknet(model_def, img_size=params["img_size"]).to(device)
         model.apply(weights_init_normal)
         
         # Load model
@@ -142,13 +147,13 @@ if __name__ == "__main__":
         ]
 
         # Training loop
-        for epoch in range(opt["epochs"]):
+        for epoch in range(params["epochs"]):
             model.train()
             start_time = time.time()
             train_loss = 0
             # select smaller batches and train batch-by-batch
             for batch_i, (img_path, imgs, targets) in enumerate(tqdm.tqdm(dataloader,
-                                                                        desc=f"Training Epoch {epoch}/{opt['epochs']}")):
+                                                                        desc=f"Training Epoch {epoch}/{params['epochs']}")):
                 batches_done = len(dataloader) * epoch + batch_i
 
                 imgs = Variable(imgs.to(device))
@@ -160,7 +165,7 @@ if __name__ == "__main__":
 
                 train_loss += loss.item()
 
-                if batches_done % opt["gradient_accumulations"] == 0:
+                if batches_done % params["gradient_accumulations"] == 0:
                     # Accumulates gradient before each step
                     optimizer.step()
                     optimizer.zero_grad()
@@ -169,7 +174,7 @@ if __name__ == "__main__":
                 #   Log progress
                 # ----------------
 
-                log_str = "\n---- [Epoch %d/%d, Batch %d/%d] ----\n" % (epoch, opt["epochs"], batch_i, len(dataloader))
+                log_str = "\n---- [Epoch %d/%d, Batch %d/%d] ----\n" % (epoch, params["epochs"], batch_i, len(dataloader))
 
                 metric_table = [["Metrics", *[f"YOLO Layer {i}" for i in range(len(model.yolo_layers))]]]
 
@@ -196,14 +201,14 @@ if __name__ == "__main__":
                 time_left = datetime.timedelta(seconds=epoch_batches_left * (time.time() - start_time) / (batch_i + 1))
                 log_str += f"\n---- ETA {time_left}"
 
-                if opt["verbose"]:
+                if params["verbose"]:
                     print(log_str)
 
                 model.seen += imgs.size(0)
 
             print(f'Epoch {epoch} Loss: {train_loss}')
             # Evaluate model after finishing an epoch
-            if epoch % opt["evaluation_interval"] == 0:
+            if epoch % params["evaluation_interval"] == 0:
                 print("---- Evaluating Model ----")
                 # Evaluate the model on the validation set
                 metrics_output = evaluate(
@@ -212,7 +217,7 @@ if __name__ == "__main__":
                     iou_thres=0.5,
                     conf_thres=0.5,
                     nms_thres=0.5,
-                    img_size=opt["img_size"],
+                    img_size=params["img_size"],
                     batch_size=4,
                     num_classes=num_classes,
                     model_type='yolov3'
@@ -237,12 +242,18 @@ if __name__ == "__main__":
 
     elif model_type=="ssd":
         # Instantiate Model
-        model = SSD(opt["model_def"], num_classes=num_classes).to(device)
-        
+        model = SSD(model_def, num_classes=num_classes).to(device)
+        load_exception = False ## Exceptions encountered while loading model
         # Load Model
-        if os.path.exists('ssd.pth'):
+        if os.path.exists('ssd (copy).pth'):
             print(f'Loading saved model....')
-            model.load_state_dict(torch.load('ssd.pth'))
+            try:
+                model.load_state_dict(torch.load('ssd (copy).pth'))
+            except: ## Pruned model instance
+                load_exception = True
+                model, _ = prune_model(model, amount=0, dim=0, norm=2)
+                model.load_state_dict(torch.load('ssd (copy).pth'))
+                
         
         loss_module = MultiBoxLoss(num_classes=num_classes, overlap_thresh=0.5, 
                                    prior_for_matching=True, bkg_label=0, neg_mining=True, 
@@ -250,17 +261,24 @@ if __name__ == "__main__":
         
         lr=1e-4
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-        for epoch in range(opt["epochs"]):
+        num_pruned = 0
+        for epoch in range(params["epochs"]):
+
             model.train()
             start_time = time.time()
             continue_flag=0
             train_loss = 0
+
+            if do_prune and num_pruned<params['num_prune']:
+                model, percent_pruned = prune_model(model, params['prune_amount'], 0, 2)
+                num_pruned+=1
+                print(f'Non Pruned Params: {percent_pruned * 100}%')
             # if (epoch+1)%40 == 0:
             #     lr *= 0.9
             #     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
             for batch_i, (img_path, img, targets) in enumerate(tqdm.tqdm(dataloader,
-                                                            desc=f"Training Epoch {epoch}/{opt['epochs']}")):
+                                                            desc=f"Training Epoch {epoch}/{params['epochs']}")):
 
                 #print(f'Input Img batch shape: {img.shape}')
                 #print(f'Target Img batch shape: {targets.shape}')
@@ -296,7 +314,7 @@ if __name__ == "__main__":
                 #   Log progress
                 # ----------------
 
-                log_str = "\n---- [Epoch %d/%d, Batch %d/%d] ----\n" % (epoch, opt["epochs"], batch_i, len(dataloader))
+                log_str = "\n---- [Epoch %d/%d, Batch %d/%d] ----\n" % (epoch, params["epochs"], batch_i, len(dataloader))
 
                 log_str += f"\nTotal loss {to_cpu(loss).item()}"
 
@@ -305,12 +323,12 @@ if __name__ == "__main__":
                 time_left = datetime.timedelta(seconds=epoch_batches_left * (time.time() - start_time) / (batch_i + 1))
                 log_str += f"\n---- ETA {time_left}"
 
-                if opt["verbose"]:
+                if params["verbose"]:
                     print(log_str)
 
             print(f'Epoch {epoch} Loss: {train_loss:.2f}')
             # Evaluate model after finishing an epoch
-            if epoch % opt["evaluation_interval"] == 0:
+            if epoch % params["evaluation_interval"] == 0:
                 print("---- Evaluating Model ----")
                 # Evaluate the model on the validation set
                 metrics_output = evaluate(
@@ -319,7 +337,7 @@ if __name__ == "__main__":
                     iou_thres=0.5,
                     conf_thres=0.5,
                     nms_thres=0.5,
-                    img_size=opt["img_size"],
+                    img_size=params["img_size"],
                     batch_size=4,
                     num_classes=num_classes,
                     model_type='ssd'
@@ -341,7 +359,12 @@ if __name__ == "__main__":
                     print("---- AP not measured (no detections found by model)")
 
                 torch.save(model.state_dict(), "ssd.pth")
-                print(f"Epoch {epoch} finished! Saving model at ssd.pth\n\n\n")    
+                print(f"Epoch {epoch} finished! Saving model at ssd.pth\n\n\n") 
+
+        ## Save Pruned model if do_prune
+        if do_prune or load_exception:
+            model = remove_pruning(model)
+            torch.save(model.state_dict(), "SSD_pruned.pth")    
 
 
 
