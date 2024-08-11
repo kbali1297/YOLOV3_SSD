@@ -120,12 +120,14 @@ for i, inp_layer_name in enumerate(input_layers):
 
 pruned_model_wt = model_SSD.state_dict()['vgg.19.weight_orig'] * model_SSD.state_dict()['vgg.19.weight_mask']
 new_model_wt = model_SSD_p.state_dict()['vgg.19.weight']
-## Check whether non zero weights match
-print(f'pruned_model_wt: {pruned_model_wt}')
-print(f'new_model_wt: {new_model_wt}')
 
-print(f'pruned_model_wt shape: {pruned_model_wt.shape}')
-print(f'new_model_wt shape: {new_model_wt.shape}')
+torch.save(model_SSD_p.state_dict(), f'ssd_compressed_{amount_prune}.pth')
+## Check whether non zero weights match
+# print(f'pruned_model_wt: {pruned_model_wt}')
+# print(f'new_model_wt: {new_model_wt}')
+
+# print(f'pruned_model_wt shape: {pruned_model_wt.shape}')
+# print(f'new_model_wt shape: {new_model_wt.shape}')
 
 
 
