@@ -1,16 +1,20 @@
-import torch
+import torch, argparse
 from utils.models import SSD
 from utils.prune import *
+import shutil
+
+parser = argparse.ArgumentParser(description='CmdLine Parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument(  '--load_pruned_model', default='SSD_pruned_0.52.pth', type=str)
+
+pargs = parser.parse_args()
+params = {}
+params.update(vars(pargs))
 
 #model_SSD = SSD("./config/ssd-kitticopy_.cfg", 1).to("cuda:0")
 model_SSD = SSD("./config/ssd-kitti.cfg", 1).to("cuda:0")
 model_SSD, _ = prune_model(model_SSD, 0, 0, 2)
-model_SSD.load_state_dict(torch.load("SSD_pruned_0.41_.pth"))
+model_SSD.load_state_dict(torch.load(params['load_pruned_model'])) # 52% pruned SSD
 print('model successfully loaded')
-random_input = torch.rand(1,3,300,300).to("cuda:0")
-output, *_ = model_SSD(random_input)
-print('model successful in processing forward')
-#model_SSD.load_state_dict(torch.load("ssd.pth"))
 
 non_pruned_filter_idxs = {}
 for i, (name, modules) in enumerate(model_SSD.named_modules()):
@@ -21,28 +25,62 @@ for i, (name, modules) in enumerate(model_SSD.named_modules()):
             for dim_ in range(sub_module.shape[0]):
                 if torch.sum(sub_module[dim_, ...]) != 0:
                     non_pruned_filter_idxs[f'{name}_{sub_name}'].append(dim_)
-            #if isinstance(sub_module, torch.nn.Conv2d):
-            #    prune.ln_structured(sub_module, 'weight', amount, n=norm, dim=dim)
 
-#print(non_pruned_filter_idxs)
+base_dict = {'300':[], '512':[]}
+extras_dict = {'300':[], '512':[]}
 for key, val in non_pruned_filter_idxs.items():
     print(f'{key}: {len(val)}')
+    layer_name, layer_num = key[:-12].split('_')
+    if layer_name == 'vgg':
+        base_dict['300'].append(len(val))
+    elif layer_name == 'extras':
+        extras_dict['300'].append(len(val))
+
+base_pool = ['M', 'M', 'C', 'M']
+extras_pool = ['S', 'S']
+
+base_, extras_ = {'300':[], '512':[]}, {'300':[], '512':[]}
+b_i, e_i = 0,0
+b_j, e_j = 0,0
+base_len = len(base_dict['300']) + len(base_pool)
+for i in range(base_len):
+    if i in [2,5,9,13]:
+        base_['300'].append(base_pool[b_j])
+        b_j += 1
+    else:
+        base_['300'].append(base_dict['300'][b_i])
+        b_i += 1
+
+extras_len = len(extras_dict['300']) + len(extras_pool)
+for i in range(extras_len):
+    if i in [1,4]:
+        extras_['300'].append(extras_pool[e_j])
+        e_j += 1
+    else:
+        extras_['300'].append(extras_dict['300'][e_i])
+        e_i += 1
 
 print(model_SSD.eval())
 
-## Pruned Model (Has more filters)
-model_SSD_p = SSD("./config/ssd-kitti_copy.cfg", 1).to("cuda:0")
-#model_SSD_p.load_state_dict(torch.load("SSD_pruned.pth"))
+## Prepare config file
+amount_prune = params['load_pruned_model'].split('_')[-1][:4]
+new_config_fname = f'config/ssd-kitti_{amount_prune}.cfg'
+
+with open('config/ssd-kitti.cfg', 'r') as file:
+    data = file.readlines()
+
+data[22] = str(data[22][:5]) + str(base_) + "\n"
+data[23] = str(data[23][:7]) + str(extras_) + "\n"
+
+with open(new_config_fname, 'w') as file:
+    file.writelines(data)
+
+# Pruned Model : Has only non zero filters and weights
+model_SSD_p = SSD(new_config_fname, 1).to("cuda:0")
 
 print(model_SSD.state_dict().keys())
-#non_pruned_conv = model_SSD.state_dict()['vgg.0.weight_orig'][non_pruned_filter_idxs['vgg_0.weight_mask'], ...]
-#non_pruned_conv_mask = model_SSD.state_dict()['vgg.0.weight_orig'][non_pruned_filter_idxs['vgg_0.weight_mask'], ...]
-#non_pruned_conv_bias = model_SSD.state_dict()['vgg.0.bias'][non_pruned_filter_idxs['vgg_0.weight_mask'], ...]
-#print(non_pruned_conv)
-#print(non_pruned_conv_bias)
-#print(non_pruned_conv.shape)
-#print(non_pruned_conv_bias.shape)
 
+## Copy non zero weights in the vgg, extras, loc and conf conv layers 
 prev_layer_name = None
 for dict_idx in range(len(non_pruned_filter_idxs.items())):
     layer_name = list(non_pruned_filter_idxs.keys())[dict_idx]
@@ -68,13 +106,6 @@ for dict_idx in range(len(non_pruned_filter_idxs.items())):
                                             [non_pruned_filter_idxs[idx_dict_key], ...]\
                                                 [:, non_pruned_filter_idxs[prev_idx_dict_key], ...])
                         
-            
-            # tensor_to_be_copied = model_SSD.state_dict()[f'{model_layer_key}.weight_orig']\
-            #                                 [non_pruned_filter_idxs[idx_dict_key], ...]\
-            #                                 [:, non_pruned_filter_idxs[prev_idx_dict_key], ...]
-            # tensor_set_ascopy_ = model_SSD_p.state_dict()[f'{model_layer_key}.weight']
-            # if model_layer_key == "vgg.19":
-            #     print("hey!")
     
 # loc and conf layers
 
@@ -86,22 +117,10 @@ for i, inp_layer_name in enumerate(input_layers):
                                                                         [:, non_pruned_filter_idxs[f'{inp_layer_name}.weight_mask'], ...])
         model_SSD_p.state_dict()[f'conf.{i}.weight'].copy_(model_SSD.state_dict()[f'conf.{i}.weight']\
                                                                         [:, non_pruned_filter_idxs[f'{inp_layer_name}.weight_mask'], ...])
-    
-# model_SSD_p.state_dict()['L2Norm.weight'] = model_SSD.state_dict()['L2Norm.weight']\
-#                                                 [non_pruned_filter_idxs['vgg_21.weight_mask'],...]
-
-output_p, *_ = model_SSD_p(random_input)
-
-torch.save(model_SSD_p.state_dict(), "ssd_compressed.pth")
-print('Pruned Model op:')
-print(output)
-
-print('Model with Pruned model pasted weights op:')
-print(output_p)
 
 pruned_model_wt = model_SSD.state_dict()['vgg.19.weight_orig'] * model_SSD.state_dict()['vgg.19.weight_mask']
 new_model_wt = model_SSD_p.state_dict()['vgg.19.weight']
-#model_SSD_p.state_dict()['vgg.19.weight'][0,...] = 0 
+## Check whether non zero weights match
 print(f'pruned_model_wt: {pruned_model_wt}')
 print(f'new_model_wt: {new_model_wt}')
 
