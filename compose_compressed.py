@@ -4,7 +4,7 @@ from utils.prune import *
 import shutil
 
 parser = argparse.ArgumentParser(description='CmdLine Parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument(  '--load_pruned_model', default='SSD_pruned_0.52.pth', type=str)
+parser.add_argument(  '--load_pruned_model', default='SSD_pruned_0.22.pth', type=str)
 
 pargs = parser.parse_args()
 params = {}
@@ -63,8 +63,8 @@ for i in range(extras_len):
 print(model_SSD.eval())
 
 ## Prepare config file
-amount_prune = params['load_pruned_model'].split('_')[-1][:4]
-new_config_fname = f'config/ssd-kitti_{amount_prune}.cfg'
+amount_unpruned = params['load_pruned_model'].split('_')[-1][:4]
+new_config_fname = f'config/ssd-kitti_{amount_unpruned}.cfg'
 
 with open('config/ssd-kitti.cfg', 'r') as file:
     data = file.readlines()
@@ -121,7 +121,7 @@ for i, inp_layer_name in enumerate(input_layers):
 pruned_model_wt = model_SSD.state_dict()['vgg.19.weight_orig'] * model_SSD.state_dict()['vgg.19.weight_mask']
 new_model_wt = model_SSD_p.state_dict()['vgg.19.weight']
 
-torch.save(model_SSD_p.state_dict(), f'ssd_compressed_{amount_prune}.pth')
+torch.save(model_SSD_p.state_dict(), f'ssd_compressed_{amount_unpruned}.pth')
 ## Check whether non zero weights match
 # print(f'pruned_model_wt: {pruned_model_wt}')
 # print(f'new_model_wt: {new_model_wt}')
