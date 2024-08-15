@@ -686,8 +686,7 @@ class SSD(nn.Module):
         conf = list()
 
         # Added res skip connections for better training stability
-        #vgg_skip_con_list = [2,7,12,14,19, 21, 26, 28, 33]
-        vgg_skip_con_list = []
+        vgg_skip_con_list = [2,7,12,14,19, 21, 26, 28, 33]
         # apply vgg up to conv4_3 relu
         for k in range(23):
             if k in vgg_skip_con_list:
@@ -811,9 +810,9 @@ def add_extras(cfg, i, batch_norm=False):
         if in_channels != 'S':
             if v == 'S':
                 layers += [nn.Conv2d(in_channels, cfg[k + 1],
-                           kernel_size=(1, 3)[flag], stride=2, padding=1, bias=False)]
+                           kernel_size=(1, 3)[flag], stride=2, padding=1)]
             else:
-                layers += [nn.Conv2d(in_channels, v, kernel_size=(1, 3)[flag], bias=False)]
+                layers += [nn.Conv2d(in_channels, v, kernel_size=(1, 3)[flag])]
             flag = not flag
         in_channels = v
     return layers
@@ -825,12 +824,12 @@ def multibox(vgg, extra_layers, cfg, num_classes):
     vgg_source = [21, -2]
     for k, v in enumerate(vgg_source):
         loc_layers += [nn.Conv2d(vgg[v].out_channels,
-                                 cfg[k] * 4, kernel_size=3, padding=1, bias=False)]
+                                 cfg[k] * 4, kernel_size=3, padding=1)]
         conf_layers += [nn.Conv2d(vgg[v].out_channels,
-                        cfg[k] * num_classes, kernel_size=3, padding=1, bias=False)]
+                        cfg[k] * num_classes, kernel_size=3, padding=1)]
     for k, v in enumerate(extra_layers[1::2], 2):
         loc_layers += [nn.Conv2d(v.out_channels, cfg[k]
-                                 * 4, kernel_size=3, padding=1, bias=False)]
+                                 * 4, kernel_size=3, padding=1)]
         conf_layers += [nn.Conv2d(v.out_channels, cfg[k]
-                                  * num_classes, kernel_size=3, padding=1, bias=False)]
+                                  * num_classes, kernel_size=3, padding=1)]
     return vgg, extra_layers, (loc_layers, conf_layers)
