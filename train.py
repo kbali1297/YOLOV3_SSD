@@ -33,6 +33,8 @@ parser.add_argument(  '--compute_map', default=False, type=bool)
 parser.add_argument(  '--multiscale_training', default=False, type=bool)
 parser.add_argument(  '--verbose', default=False, type=bool)
 parser.add_argument(  '--use_gpu', default=True, type=bool)
+parser.add_argument(  '--load_ssd_model', default='ssd.pth', type=str)
+parser.add_argument(  '--save_ssd_model', default=None, type=str)
 
 pargs = parser.parse_args()
 params = {}
@@ -245,16 +247,19 @@ if __name__ == "__main__":
         model = SSD(model_def, num_classes=num_classes).to(device)
         load_exception = False ## Exceptions encountered while loading model
         # Load Model
-        if os.path.exists('ssd (copy).pth'):
-            print(f'Loading saved model....')
-            try:
-                model.load_state_dict(torch.load('ssd (copy).pth'))
-            except: ## Pruned model instance
-                load_exception = True
-                model, _ = prune_model(model, amount=0, dim=0, norm=2)
-                model.load_state_dict(torch.load('ssd (copy).pth'))
+        if os.path.exists(params['load_ssd_model']):
+            print(f'Loading saved model {params["load_ssd_model"]}....')
+            
+            model.load_state_dict(torch.load(params['load_ssd_model']))
+            #except: ## Pruned model instance
+            #    print("could not load model")
+            #    exit(1)
+                #load_exception = True
+                #model, _ = prune_model(model, amount=0, dim=0, norm=2)
+                #model.load_state_dict(torch.load('ssd_pruned_pasted.pth'))
                 
-        
+        if params['save_ssd_model'] == None: params['save_ssd_model'] = params['load_ssd_model']
+
         loss_module = MultiBoxLoss(num_classes=num_classes, overlap_thresh=0.5, 
                                    prior_for_matching=True, bkg_label=0, neg_mining=True, 
                                    neg_pos=3, neg_overlap=0.5, encode_target=False, variances=model.variances)
@@ -358,13 +363,13 @@ if __name__ == "__main__":
                 else:
                     print("---- AP not measured (no detections found by model)")
 
-                torch.save(model.state_dict(), "ssd.pth")
-                print(f"Epoch {epoch} finished! Saving model at ssd.pth\n\n\n") 
+                torch.save(model.state_dict(), params['save_ssd_model'])
+                print(f"Epoch {epoch} finished! Saving model at {params['save_ssd_model']}\n\n\n") 
 
         ## Save Pruned model if do_prune
         if do_prune or load_exception:
             model = remove_pruning(model)
-            torch.save(model.state_dict(), "SSD_pruned.pth")    
+            torch.save(model.state_dict(), f'{params["save_ssd_model"][:-4]}_perm_pruned.pth')    
 
 
 
