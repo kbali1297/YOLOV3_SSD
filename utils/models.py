@@ -186,6 +186,10 @@ class YOLOLayer(nn.Module):
             )
 
             # Loss : Mask outputs to ignore non-existing objects (except with conf. loss)
+            #YOLO: Uses BCE loss that accepts both pred,target shapes as (N,A,d1,d2,C)
+            #SSD: Uses CCE loss that accepts pred,target shapes as (N,A,d1,d2,C) and (N,A,d1,d2) respectively
+            #For prediction the tensor consists of C-dimensional one hot vector at every Nth image Ath anchor box type, (d1,d2) location BB
+            #In case of SSD target, the tensor consists of the integer class index that the Nth image, Ath anchor box, (d1,d2) location BB has
             loss_x = self.mse_loss(x[obj_mask], tx[obj_mask])
             loss_y = self.mse_loss(y[obj_mask], ty[obj_mask])
             loss_w = self.mse_loss(w[obj_mask], tw[obj_mask])
@@ -196,6 +200,7 @@ class YOLOLayer(nn.Module):
             loss_cls = self.bce_loss(pred_cls[obj_mask], tcls[obj_mask])
             total_loss = loss_x + loss_y + loss_w + loss_h + loss_conf + loss_cls
 
+            
             # Metrics
             cls_acc = 100 * class_mask[obj_mask].mean()
             conf_obj = pred_conf[obj_mask].mean()
@@ -660,7 +665,7 @@ class SSD(nn.Module):
 
         
         self.softmax = nn.Softmax(dim=-1)
-        self.detect = Detect(self.num_classes, 0, 100, 0.5, 0.5, variances=self.variances)
+        self.detect = Detect(self.num_classes, 0, 50, 0.5, 0.5, variances=self.variances)
 
     def forward(self, x, mode='eval'):
         """Applies network layers and ops on input image(s) x.

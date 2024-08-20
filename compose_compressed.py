@@ -11,7 +11,7 @@ params = {}
 params.update(vars(pargs))
 
 #model_SSD = SSD("./config/ssd-kitticopy_.cfg", 1).to("cuda:0")
-model_SSD = SSD("./config/ssd-kitti.cfg", 1).to("cuda:0")
+model_SSD = SSD("./config/ssd-kitti.cfg", 7).to("cuda:0")
 model_SSD, _ = prune_model(model_SSD, 0, 0, 2)
 model_SSD.load_state_dict(torch.load(params['load_pruned_model'])) # 52% pruned SSD
 print('model successfully loaded')
@@ -76,7 +76,7 @@ with open(new_config_fname, 'w') as file:
     file.writelines(data)
 
 # Pruned Model : Has only non zero filters and weights
-model_SSD_p = SSD(new_config_fname, 1).to("cuda:0")
+model_SSD_p = SSD(new_config_fname, 7).to("cuda:0")
 
 print(model_SSD.state_dict().keys())
 
@@ -110,7 +110,6 @@ for dict_idx in range(len(non_pruned_filter_idxs.items())):
 # loc and conf layers
 
 input_layers = ['vgg_21', 'vgg_33', 'extras_1', 'extras_3', 'extras_5', 'extras_7']
-
 for i, inp_layer_name in enumerate(input_layers):
     with torch.no_grad():
         model_SSD_p.state_dict()[f'loc.{i}.weight'].copy_(model_SSD.state_dict()[f'loc.{i}.weight']\
@@ -121,7 +120,7 @@ for i, inp_layer_name in enumerate(input_layers):
 pruned_model_wt = model_SSD.state_dict()['vgg.19.weight_orig'] * model_SSD.state_dict()['vgg.19.weight_mask']
 new_model_wt = model_SSD_p.state_dict()['vgg.19.weight']
 
-torch.save(model_SSD_p.state_dict(), f'ssd_compressed_{amount_unpruned}.pth')
+torch.save(model_SSD_p.state_dict(), f'SSD_compressed_{amount_unpruned}.pth')
 ## Check whether non zero weights match
 # print(f'pruned_model_wt: {pruned_model_wt}')
 # print(f'new_model_wt: {new_model_wt}')
