@@ -1,0 +1,4 @@
+classes= 7
+train=kitti-main/train.txt
+test=kitti-main/test.txt
+names=kitti-main/classes.names
