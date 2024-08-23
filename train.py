@@ -19,13 +19,13 @@ from utils.prune import *
 import argparse
 
 parser = argparse.ArgumentParser(description='CmdLine Parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument(  '--model', default='SSD', type=str)
+parser.add_argument(  '--model', default='YOLO', type=str)
 parser.add_argument(  '--prune_amount', default=0.0, type=float)
 parser.add_argument(  '--num_prune', default=0, type=int)
-parser.add_argument(  '--epochs', default=20, type=int)
-parser.add_argument(  '--batch_size', default=4, type=int)
+parser.add_argument(  '--epochs', default=30, type=int)
+parser.add_argument(  '--batch_size', default=6, type=int)
 parser.add_argument(  '--gradient_accumulations', default=2, type=int)
-parser.add_argument(  '--data_config', default='config/kitti_1cls.data', type=str)
+parser.add_argument(  '--data_config', default='config/kitti-main.data', type=str)
 parser.add_argument(  '--n_cpu', default=1, type=int)
 parser.add_argument(  '--img_size', default=300, type=int)
 parser.add_argument(  '--evaluation_interval', default=1, type=int)
@@ -33,7 +33,7 @@ parser.add_argument(  '--compute_map', default=False, type=bool)
 parser.add_argument(  '--multiscale_training', default=False, type=bool)
 parser.add_argument(  '--verbose', default=False, type=bool)
 parser.add_argument(  '--use_gpu', default=True, type=bool)
-parser.add_argument(  '--load_ssd_model', default='ssd.pth', type=str)
+parser.add_argument(  '--load_ssd_model', default='yolov3.pth', type=str)
 parser.add_argument(  '--save_ssd_model', default=None, type=str)
 
 pargs = parser.parse_args()
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     if params['model'] == 'SSD': 
         model_def = "config/ssd-kitti.cfg"
     elif params["model"] == 'YOLO':
-        model_def = "config/yolov3-kitti-tiny_1cls.cfg"
+        model_def = "config/yolov3-kitti_6cls.cfg"
 
     do_prune = False
     if params['num_prune'] > 0: do_prune = True
@@ -122,7 +122,10 @@ if __name__ == "__main__":
         # Load model
         if os.path.exists('yolov3.pth'):
             print(f'Loading saved model....')
-            model.load_state_dict(torch.load('yolov3.pth'))
+            try:
+                model.load_state_dict(torch.load('yolov3.pth'))
+            except:
+                print(f'Model Load failed. Initializing new model ..')
         
         
 
@@ -147,7 +150,7 @@ if __name__ == "__main__":
             "conf_obj",
             "conf_noobj",
         ]
-
+        max_mAP = 0
         # Training loop
         for epoch in range(params["epochs"]):
             model.train()
@@ -235,11 +238,14 @@ if __name__ == "__main__":
                     ]
                     print(f'Epoch: {epoch}, Precision: {precision.mean():.2f},  Recall: {recall.mean():.2f}, mAP: {AP.mean():.2f}, F1: {f1.mean():.2f}')
 
-                    print(f"---- AP class Car: {round(AP.mean(), 2)}")
+                    print(f"---- mAP: {round(AP.mean(), 2)}")
                 else:
                     print("---- AP not measured (no detections found by model)")
 
-                torch.save(model.state_dict(), "yolov3.pth")
+                mAP = AP.mean()
+                if mAP > max_mAP:
+                    torch.save(model.state_dict(), "yolov3.pth")
+                    max_mAP = mAP
                 print(f"Epoch {epoch} finished! Saving model at yolov3.pth\n\n\n")
 
     elif model_type=="ssd":
@@ -250,7 +256,12 @@ if __name__ == "__main__":
         if os.path.exists(params['load_ssd_model']):
             print(f'Loading saved model {params["load_ssd_model"]}....')
             
-            model.load_state_dict(torch.load(params['load_ssd_model']))
+            try:
+                model.load_state_dict(torch.load(params['load_ssd_model']))
+            except:
+                print(f'Model failed to load. Initializing new model ..')
+                #model, _ = prune_model(model, amount=0, dim=0, norm=2)
+                #model.load_state_dict(torch.load(params['load_ssd_model']))
             #except: ## Pruned model instance
             #    print("could not load model")
             #    exit(1)
@@ -262,11 +273,12 @@ if __name__ == "__main__":
 
         loss_module = MultiBoxLoss(num_classes=num_classes, overlap_thresh=0.5, 
                                    prior_for_matching=True, bkg_label=0, neg_mining=True, 
-                                   neg_pos=3, neg_overlap=0.5, encode_target=False, variances=model.variances)
+                                   neg_pos=3, neg_overlap=0.5, encode_target=False, variances=model.variances, use_gpu=params["use_gpu"])
         
         lr=1e-4
         optimizer = torch.optim.Adam(model.parameters(), lr=lr)
         num_pruned = 0
+        max_mAP = 0
         for epoch in range(params["epochs"]):
 
             model.train()
@@ -274,10 +286,11 @@ if __name__ == "__main__":
             continue_flag=0
             train_loss = 0
 
+            percent_unpruned = torch.tensor(1.0)
             if do_prune and num_pruned<params['num_prune']:
-                model, percent_pruned = prune_model(model, params['prune_amount'], 0, 2)
+                model, percent_unpruned = prune_model(model, params['prune_amount'], 0, 2)
                 num_pruned+=1
-                print(f'Non Pruned Params: {percent_pruned * 100}%')
+                print(f'Non Pruned Params: {percent_unpruned * 100}%')
             # if (epoch+1)%40 == 0:
             #     lr *= 0.9
             #     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -288,7 +301,7 @@ if __name__ == "__main__":
                 #print(f'Input Img batch shape: {img.shape}')
                 #print(f'Target Img batch shape: {targets.shape}')
                 predictions = model(img.to(device), 'train')
-                targets = Variable(targets).to(device)
+                targets = targets.to(device)
 
                 targets_ssd = [None] * img.shape[0]
                 for k in range(targets.shape[0]):
@@ -356,14 +369,19 @@ if __name__ == "__main__":
                         ("validation/mAP", AP.mean()),
                         ("validation/f1", f1.mean()),
                     ]
-
+                    mAP = AP.mean()
                     print(f'Epoch: {epoch}, Precision: {precision.mean():.2f},  Recall: {recall.mean():.2f}, mAP: {AP.mean():.2f}, F1: {f1.mean():.2f}')
 
-                    print(f"---- AP class Car: {round(AP.mean(), 2)}")
+                    print(f"---- mAP: {round(mAP, 2)}")
                 else:
                     print("---- AP not measured (no detections found by model)")
 
-                torch.save(model.state_dict(), params['save_ssd_model'])
+                if num_pruned == params['num_prune']:
+                    unpruned_ = int(torch.round(percent_unpruned * 100))
+                    if mAP > max_mAP:
+                        torch.save(model.state_dict(), f'{params["save_ssd_model"]}_0.{unpruned_}.pth')
+                        max_mAP = mAP
+                        print('Saved Model')
                 print(f"Epoch {epoch} finished! Saving model at {params['save_ssd_model']}\n\n\n") 
 
         ## Save Pruned model if do_prune
