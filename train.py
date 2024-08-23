@@ -44,7 +44,7 @@ params.update(vars(pargs))
 if __name__ == "__main__":
 
     if params['model'] == 'SSD': 
-        model_def = "config/ssd-kitti.cfg"
+        model_def = "config/ssd-kitti_1.00.cfg"
     elif params["model"] == 'YOLO':
         model_def = "config/yolov3-kitti_6cls.cfg"
 

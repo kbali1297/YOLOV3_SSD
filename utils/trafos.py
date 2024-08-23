@@ -5,12 +5,25 @@ import numpy as np
 import imgaug.augmenters as iaa
 from imgaug.augmentables.bbs import BoundingBox, BoundingBoxesOnImage
 
-try:
-    from utils.task2_slt import xywh2xyxy_np_slt as xywh2xyxy_np
-except ImportError:
-    from utils.task2 import xywh2xyxy_np
 import torchvision.transforms as transforms
 
+
+def xywh2xyxy_np(xywh):
+    """
+    input:
+        xywh (type: np.ndarray, shape: (n,4), dtype: int16): n bounding boxes with the xywh format (center based)
+
+    output:
+        xyxy (type: np.ndarray, shape: (n,4), dtype: int16): n bounding boxes with the xyxy format (edge based)
+    """
+
+    xyxy = np.zeros_like(xywh)
+    xyxy[..., 0] = xywh[..., 0] - xywh[..., 2] / 2
+    xyxy[..., 1] = xywh[..., 1] - xywh[..., 3] / 2
+    xyxy[..., 2] = xywh[..., 0] + xywh[..., 2] / 2
+    xyxy[..., 3] = xywh[..., 1] + xywh[..., 3] / 2
+
+    return xyxy
 
 class ImgAug(object):
     def __init__(self, augmentations=[]):
