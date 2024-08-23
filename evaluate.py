@@ -55,22 +55,10 @@ def evaluate(model, path, iou_thres, conf_thres, nms_thres, img_size, batch_size
         with torch.no_grad():
             if model_type == 'yolov3':
                 outputs = model(imgs)
-                outputs = non_max_suppression(outputs, conf_thres=conf_thres, nms_thres=nms_thres)
             elif model_type == 'ssd':
-                outputs_ = model(imgs, 'eval')
-                outputs_[..., 1:] = outputs_[..., 1:] * img_size #(batch_size, num_classes, topk, 5(conf score + 4(cx,cy,w,h)))
-                out_reshaped = torch.cat([outputs_[:,0,:,1:], 
-                                       outputs_[:,0,:,:1], 
-                                       torch.ones_like(outputs_[:,0,:,:1])*-1], dim=-1).squeeze(1) # -> (batch_size, topk, 6 (4(cx,cy,w,h) + 1(conf_score) + 1(bk_label)))
-                for i in range(1,outputs_.shape[1]): # Iterate overall classes, skip background class
-                    out_reshaped_i = torch.cat([outputs_[:,i,:,1:], 
-                                       outputs_[:,i,:,:1], 
-                                       torch.ones_like(outputs_[:,0,:,:1])*(i-1)], dim=-1).squeeze(1) # -> (batch_size, topk, 6 (4(cx,cy,w,h) + 1(conf_score) + 1(class_label)))
-                    out_reshaped = torch.cat([out_reshaped, out_reshaped_i], dim=1) # -> Has shape (batch_size, topk * num_classes, 6) at the end of the loop
-                outputs = []
-                for img_idx in range(out_reshaped.shape[0]):
-                    conf_idxs = torch.nonzero(out_reshaped[img_idx, :,4] > conf_thres).squeeze(-1)
-                    outputs.append(out_reshaped[img_idx,conf_idxs,:])
+                outputs = model(imgs, 'eval')
+        
+        outputs = non_max_suppression(outputs, conf_thres=conf_thres, nms_thres=nms_thres)
         sample_metrics += get_batch_statistics(outputs, targets, iou_threshold=iou_thres)
     
     if len(sample_metrics) == 0:  # no detections over whole validation set.

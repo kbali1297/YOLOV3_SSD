@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from utils.parse_config import *
-from utils.utils import build_targets, to_cpu
+from utils.utils import build_targets, to_cpu, xywh2xyxy
 #import torch.Tensor as Tensor
 torch.set_printoptions(profile="Full")
 
@@ -165,6 +165,7 @@ class YOLOLayer(nn.Module):
         pred_boxes[..., 2] = torch.exp(w.data) * self.anchor_w
         pred_boxes[..., 3] = torch.exp(h.data) * self.anchor_h
 
+        pred_boxes = xywh2xyxy(pred_boxes)
         output = torch.cat(
             (
                 pred_boxes.view(num_samples, -1, 4) * self.stride,
@@ -431,7 +432,7 @@ class Detect(nn.Module):
     scores and threshold to a top_k number of output predictions for both
     confidence score and locations.
     """
-    def __init__(self, num_classes, bkg_label, top_k, conf_thresh, nms_thresh, variances):
+    def __init__(self, num_classes, bkg_label, top_k, conf_thresh, nms_thresh, variances, img_size=300):
         super(Detect, self).__init__()
         self.num_classes = num_classes
         self.background_label = bkg_label
@@ -442,6 +443,7 @@ class Detect(nn.Module):
             raise ValueError('nms_threshold must be non negative.')
         self.conf_thresh = conf_thresh
         self.variance = variances
+        self.img_size = img_size
 
     def forward(self, loc_data, conf_data, prior_data):
         """
@@ -455,36 +457,23 @@ class Detect(nn.Module):
         """
         num = loc_data.size(0)  # batch size
         num_priors = prior_data.size(0)
-        output = torch.zeros(num, self.num_classes, self.top_k, 5)
+        
         conf_preds = conf_data.view(num, num_priors,
-                                    self.num_classes).transpose(2, 1)
+                                    self.num_classes)
+        
+        #box confidence is simply the inverse likelihood of it being the background
+        box_conf = 1 - conf_preds[:,:,:1]
+
+        # Filtering out the boxes with highest objectness scores
 
         # Decode predictions into bboxes.
-        for i in range(num):
-            decoded_boxes = decode(loc_data[i], prior_data, self.variance)
-            # For each class, perform nms
-            conf_scores = conf_preds[i].clone()
+        decoded_boxes = decode_batch(loc_data, prior_data.unsqueeze(0).expand_as(loc_data), self.variance) #(batch, num_priors, 4)
+        decoded_boxes *= self.img_size
+        conf_preds = torch.softmax(conf_preds[:,:,1:]/conf_preds[:,:,:1], dim=-1)
 
-            for cl in range(1, self.num_classes):
-                c_mask = conf_scores[cl].gt(self.conf_thresh)
-                scores = conf_scores[cl][c_mask]
-                if scores.size(0) == 0:
-                    continue
-                l_mask = c_mask.unsqueeze(1).expand_as(decoded_boxes)
-                boxes = decoded_boxes[l_mask].view(-1, 4)
-                # idx of highest scoring and non-overlapping boxes per class
-                ids, count = nms(boxes, scores, self.nms_thresh, self.conf_thresh)
-                if count > output.shape[-1]:
-                    count = output.shape[-1]
-                output[i, cl, :count] = \
-                    torch.cat((scores[ids[:count]].unsqueeze(1),
-                               boxes[ids[:count]]), 1)
-        flt = output.contiguous().view(num, -1, 5)
-        _, idx = flt[:, :, 0].sort(1, descending=True)
-        _, rank = idx.sort(1)
-        flt[(rank < self.top_k).unsqueeze(-1).expand_as(flt)].fill_(0)
-        return output
-    
+        return to_cpu(torch.cat([decoded_boxes, box_conf, conf_preds], dim=-1))
+
+
 class MultiBoxLoss(nn.Module):
     """SSD Weighted Loss Function
     Compute Targets:
@@ -665,7 +654,7 @@ class SSD(nn.Module):
 
         
         self.softmax = nn.Softmax(dim=-1)
-        self.detect = Detect(self.num_classes, 0, 50, 0.5, 0.5, variances=self.variances)
+        self.detect = Detect(self.num_classes, 0, 10, 0.5, 0.5, variances=self.variances)
 
     def forward(self, x, mode='eval'):
         """Applies network layers and ops on input image(s) x.
