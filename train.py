@@ -260,8 +260,9 @@ if __name__ == "__main__":
                 model.load_state_dict(torch.load(params['load_ssd_model']))
             except:
                 print(f'Model failed to load. Initializing new model ..')
-                #model, _ = prune_model(model, amount=0, dim=0, norm=2)
-                #model.load_state_dict(torch.load(params['load_ssd_model']))
+                model, _ = prune_model(model, amount=0, dim=0, norm=2)
+                model.load_state_dict(torch.load(params['load_ssd_model']))
+                print(f'loaded the pruned model')
             #except: ## Pruned model instance
             #    print("could not load model")
             #    exit(1)
@@ -378,10 +379,10 @@ if __name__ == "__main__":
 
                 if num_pruned == params['num_prune']:
                     unpruned_ = int(torch.round(percent_unpruned * 100))
-                    if mAP > max_mAP:
-                        torch.save(model.state_dict(), f'{params["save_ssd_model"]}_0.{unpruned_}.pth')
-                        max_mAP = mAP
-                        print('Saved Model')
+                    #if mAP > max_mAP:
+                    torch.save(model.state_dict(), f'{params["save_ssd_model"]}_0.{unpruned_}.pth')
+                    #max_mAP = mAP
+                    print('Saved Model')
                 print(f"Epoch {epoch} finished! Saving model at {params['save_ssd_model']}\n\n\n") 
 
         ## Save Pruned model if do_prune

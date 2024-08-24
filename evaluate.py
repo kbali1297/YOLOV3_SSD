@@ -3,7 +3,7 @@ from __future__ import division
 from utils.models import *
 from utils.utils import *
 from utils.datasets import *
-from utils.trafos import *
+#from utils.trafos import *
 from utils.parse_config import *
 
 import tqdm

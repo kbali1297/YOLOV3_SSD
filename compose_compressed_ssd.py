@@ -4,14 +4,14 @@ from utils.prune import *
 import shutil
 
 parser = argparse.ArgumentParser(description='CmdLine Parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument(  '--load_pruned_model', default='SSD_pruned_0.22.pth', type=str)
+parser.add_argument(  '--load_pruned_model', default='SSD_Original.pth_0.11.pth', type=str)
 
 pargs = parser.parse_args()
 params = {}
 params.update(vars(pargs))
 
 #model_SSD = SSD("./config/ssd-kitticopy_.cfg", 1).to("cuda:0")
-model_SSD = SSD("./config/ssd-kitti.cfg", 7).to("cuda:0")
+model_SSD = SSD("./config/ssd-kitti_1.00.cfg", 7).to("cuda:0")
 model_SSD, _ = prune_model(model_SSD, 0, 0, 2)
 model_SSD.load_state_dict(torch.load(params['load_pruned_model'])) # 52% pruned SSD
 print('model successfully loaded')
@@ -66,7 +66,7 @@ print(model_SSD.eval())
 amount_unpruned = params['load_pruned_model'].split('_')[-1][:4]
 new_config_fname = f'config/ssd-kitti_{amount_unpruned}.cfg'
 
-with open('config/ssd-kitti.cfg', 'r') as file:
+with open('config/ssd-kitti_1.00.cfg', 'r') as file:
     data = file.readlines()
 
 data[22] = str(data[22][:5]) + str(base_) + "\n"
