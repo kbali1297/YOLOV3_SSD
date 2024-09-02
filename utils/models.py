@@ -464,8 +464,6 @@ class Detect(nn.Module):
         #box confidence is simply the inverse likelihood of it being the background
         box_conf = 1 - conf_preds[:,:,:1]
 
-        # Filtering out the boxes with highest objectness scores
-
         # Decode predictions into bboxes.
         decoded_boxes = decode_batch(loc_data, prior_data.unsqueeze(0).expand_as(loc_data), self.variance) #(batch, num_priors, 4)
         decoded_boxes *= self.img_size
